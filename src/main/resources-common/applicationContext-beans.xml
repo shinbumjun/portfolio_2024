@@ -33,8 +33,8 @@
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="smtp.gmail.com" />
 		<property name="port" value="587" />
-		<property name="username" value="yourmail" />
-		<property name="password" value="yourpassword" />
+		<property name="username" value="sinbumjun123@naver.com" />
+		<property name="password" value="9QHSNKLCZF9C" />
 		<property name="javaMailProperties">
 			<props>
 				<prop key="mail.smtp.starttls.enable">true</prop>
@@ -45,9 +45,8 @@
 	<!-- Annotation 기반의 Component Scan 필터(service package 만 검색) -->
 	<context:component-scan base-package="com.lhs">
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
-		<context:include-filter type="regex" expression="\.*\.dao\.*"/>
+		<context:include-filter type="regex" expression=".*\.dao\..*"/>
 	</context:component-scan>
-	
 	
 	<!-- DB와 연결/쿼리의 수행/결과의 가공 등을 담당하는 sqlSessionFactory -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">

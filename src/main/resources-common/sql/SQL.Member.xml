@@ -22,15 +22,53 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	SELECT SHA2(MD5(#{memberPw}), 256) AS pw
 	</select>
 	
+	<!-- 
+		  회원가입시 중복 ID확인
+		 memberId          member_id  
+		 public int checkId(HashMap<String, String> params);
+	-->
 	<select id="checkId" parameterType="map" resultType="int">
-	
+		SELECT count(*)
+		FROM S_shinbumjun.`member`
+		where member_id = #{memberId};
 	</select>
 	
+	<!-- 
+		 회원가입
+		 memberId          member_id  
+		 memberName        member_name
+		 memberPw          member_pw
+		 memberNick        member_nick
+		 email	           email
+		 
+		 public int join(HashMap<String, String> params);  	 
+	-->
 	<insert id="join" parameterType="map">
-
+    	INSERT INTO S_shinbumjun.member
+    	(type_seq, member_id, member_pw, member_name, member_nick, email, create_dtm, update_dtm, membercol)
+    	VALUES (1, #{memberId}, #{memberPw}, #{memberName}, #{memberNick}, #{email}, DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'), DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'), NULL);
 	</insert>
+
+	<!--  
+		  로그인시 ID와 비밀번호가 일치하는지 확인
+		 public MemberDto Loginchick(HashMap<String, String> params);
+		 memberId          member_id  
+	-->
+	<select id="Loginchick" parameterType="map" resultType="MemberDto">
+		SELECT member_idx, type_seq, member_id, member_pw, member_name, member_nick, email, create_dtm, update_dtm, membercol
+		FROM S_shinbumjun.`member`
+		where member_id = #{memberId};
+	</select>
+	
 	<delete id = "delMember" parameterType="HashMap">
 		
 	</delete>		
 
 </mapper>
+
+
+
+
+
+
+

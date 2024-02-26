@@ -16,6 +16,13 @@
 	</properties>
 
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
+		<dependency>
+		    <groupId>org.mariadb.jdbc</groupId>
+		    <artifactId>mariadb-java-client</artifactId>
+		    <version>3.3.3</version>
+		</dependency>
+		
 		<!-- 비밀번호 확인 용 메일수신 library -->
 		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
 		<dependency>

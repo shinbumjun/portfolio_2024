@@ -20,7 +20,7 @@
 			$("#loading-div-background").css({'z-index' : '9999'}).show();
 			var formData = new FormData(document.loginForm);
 			$.ajax({
-				url: 'URL',
+				url: "<c:url value='/member/login.do'/>",
 				type: "POST",
 				data: formData,
 				dataType:'TEXT',
@@ -71,9 +71,9 @@
 						<form class="m-0" method="post" name="loginForm" autocomplete="off">
 							<div class="clearfix">
 								
-								<!-- Email -->
+								<!-- memberId -->
 								<div class="form-group">
-									<input type="text" id="memberId" name="memberId" class="form-control" placeholder="USER ID" required="">
+									<input type="text" id="memberId" name="memberId" value="${cookie.memberId.value}" class="form-control" placeholder="USER ID" required="">
 								</div>
 								
 								<!-- Password -->
@@ -82,7 +82,7 @@
 								</div>
 									
 							</div>
-							
+											
 							<div class="row">
 								<%--
 								<div class="col-md-6 col-sm-6 col-6">
@@ -92,13 +92,13 @@
 									</div>
 								</div>
 								 --%>
-								
 <!-- 								<div class="col-md-6 col-sm-6 col-6 text-right"> -->
 								<div class="col-md-12 col-sm-12 col-12 text-right">
-									<button type="button" id="btnLogin" class="btn btn-primary">OK, LOG IN</button>
+								    <input type="checkbox" id="keep" name="logCheck" class="input_keep" ${empty cookie.memberId.value ? "":"checked"} style="display: inline-block; margin-right: 5px;">
+								    <label for="keep" class="keep_text" style="display: inline-block;">로그인 상태 유지</label>
+								    <button type="button" id="btnLogin" class="btn btn-primary">OK, LOG IN</button>
 								</div>
 							</div>
-							
 						</form>
 	
 					</div>
