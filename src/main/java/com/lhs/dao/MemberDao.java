@@ -12,10 +12,10 @@ public interface MemberDao {
 	public int totalMemberCnt(HashMap<String, Object> params);
 
 	// 회원가입
-	public int join(HashMap<String, String> params);
+	public int join(MemberDto memberDto);
 	
 	// 회원가입시 중복 ID확인
-	public int checkId(HashMap<String, String> params);
+	public int checkId(MemberDto memberDto); // String memberId로 하면 에러가 남
 	
 	public HashMap<String, Object> getMemberById(HashMap<String, String> params);
 	
@@ -24,6 +24,14 @@ public interface MemberDao {
 	public int delMember(HashMap<String,Object> params);
 
 	// 로그인시 ID와 비밀번호가 일치하는지 확인
-	public MemberDto Loginchick(HashMap<String, String> params);
-	
+	public MemberDto Loginchick(String memberId);
+
+	// 회원가입 완료하면 이메일로 환영문자 보내기
+	public MemberDto Welcomeemail(String email);
+
+	// 비밀번호 찾기
+	public MemberDto Passwordchick(HashMap<String, String> member);
 }
+
+
+

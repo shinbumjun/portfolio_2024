@@ -27,7 +27,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		 memberId          member_id  
 		 public int checkId(HashMap<String, String> params);
 	-->
-	<select id="checkId" parameterType="map" resultType="int">
+	<select id="checkId" parameterType="MemberDto" resultType="int">
 		SELECT count(*)
 		FROM S_shinbumjun.`member`
 		where member_id = #{memberId};
@@ -43,7 +43,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		 
 		 public int join(HashMap<String, String> params);  	 
 	-->
-	<insert id="join" parameterType="map">
+	<insert id="join" parameterType="MemberDto">
     	INSERT INTO S_shinbumjun.member
     	(type_seq, member_id, member_pw, member_name, member_nick, email, create_dtm, update_dtm, membercol)
     	VALUES (1, #{memberId}, #{memberPw}, #{memberName}, #{memberNick}, #{email}, DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'), DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'), NULL);
@@ -54,10 +54,33 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		 public MemberDto Loginchick(HashMap<String, String> params);
 		 memberId          member_id  
 	-->
-	<select id="Loginchick" parameterType="map" resultType="MemberDto">
+	<select id="Loginchick" parameterType="String" resultType="MemberDto">
 		SELECT member_idx, type_seq, member_id, member_pw, member_name, member_nick, email, create_dtm, update_dtm, membercol
 		FROM S_shinbumjun.`member`
 		where member_id = #{memberId};
+	</select>
+	
+	<!-- 
+		  회원가입 완료하면 이메일로 환영문자 보내기
+		 public MemberDto Welcomeemail(String email); 
+	-->
+	<select id="Welcomeemail" parameterType="String" resultType="MemberDto">
+		SELECT member_idx, type_seq, member_id, member_pw, member_name, member_nick, email, create_dtm, update_dtm, membercol
+		FROM S_shinbumjun.`member`
+		where email = #{email};
+	</select>
+	
+	<!--  
+		    비밀번호 찾기
+		  public MemberDto Passwordchick(MemberDto memberDto);
+		  memberId        member_id  
+	 	  email	          email
+	-->
+	<select id="Passwordchick" parameterType="map" resultType="MemberDto">
+		SELECT member_idx, type_seq, member_id, member_pw, member_name, member_nick, email, create_dtm, update_dtm, membercol
+		FROM S_shinbumjun.`member`
+		where member_id = #{memberId}
+		and email = #{email};
 	</select>
 	
 	<delete id = "delMember" parameterType="HashMap">

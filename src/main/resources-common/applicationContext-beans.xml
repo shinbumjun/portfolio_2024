@@ -31,10 +31,10 @@
 
 	<!-- 홈에서 이메일 전송하기 위한 bean설정 -->
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="smtp.gmail.com" />
+		<property name="host" value="smtp.naver.com" />
 		<property name="port" value="587" />
-		<property name="username" value="sinbumjun123@naver.com" />
-		<property name="password" value="9QHSNKLCZF9C" />
+		<property name="username" value="sinbumjun123" />
+		<property name="password" value="LGUBN4BBRCP3" />
 		<property name="javaMailProperties">
 			<props>
 				<prop key="mail.smtp.starttls.enable">true</prop>

@@ -82,6 +82,7 @@
 								<li><a tabindex="-1" href="<c:url value='/member/logout.do'/>"><i class="glyphicon glyphicon-off"></i> LOGOUT</a></li>
 	                    	</c:when>
 	                    	<c:otherwise>
+								<li><a tabindex="-1" href="javascript:movePage(this, '/member/goPassword.do')">password?</a></li>
 								<li><a tabindex="-1" href="javascript:movePage(this, '/member/goLoginPage.do')">LOGIN</a></li>
 	                    	</c:otherwise>
 	                    </c:choose>
@@ -134,7 +135,7 @@
 									</li>
 									
 							
-							<c:if test='${sessionScope.memberId != null && sessionScope.memberType ==1 }'>
+							<c:if test='${sessionScope.memberId != null && sessionScope.memberType ==9 }'>
 									<li class="dropdown mega-menu"><!-- SHORTCODES -->
 										<a class="dropdown-toggle noicon" href="javascript:movePage(this, '/admin.do')">
 											ADMIN
