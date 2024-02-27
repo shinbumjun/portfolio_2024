@@ -1,3 +1,5 @@
+노션 링크 : https://www.notion.so/portfolio_2024-accdde7bd46a43f6b405d7453738f13b?pvs=4
+
 context root : pf <br/>
 index : /pf/index.do
 
