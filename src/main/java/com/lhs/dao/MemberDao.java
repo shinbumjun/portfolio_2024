@@ -31,6 +31,9 @@ public interface MemberDao {
 
 	// 비밀번호 찾기
 	public MemberDto Passwordchick(HashMap<String, String> member);
+
+	// 비밀번호 변경
+	public int pwchange(MemberDto memberDto);
 }
 
 

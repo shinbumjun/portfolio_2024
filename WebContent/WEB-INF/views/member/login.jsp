@@ -95,7 +95,7 @@
 <!-- 								<div class="col-md-6 col-sm-6 col-6 text-right"> -->
 								<div class="col-md-12 col-sm-12 col-12 text-right">
 								    <input type="checkbox" id="keep" name="logCheck" class="input_keep" ${empty cookie.memberId.value ? "":"checked"} style="display: inline-block; margin-right: 5px;">
-								    <label for="keep" class="keep_text" style="display: inline-block;">로그인 상태 유지</label>
+								    <label for="keep" class="keep_text" style="display: inline-block;">아이디 기억</label>
 								    <button type="button" id="btnLogin" class="btn btn-primary">OK, LOG IN</button>
 								</div>
 							</div>
@@ -104,7 +104,7 @@
 					</div>
 					
 					<div class="mt-30 text-center">
-						<a href="javascript:movePage(this, '/member/goRegisterPage.do')"><strong>Create Account</strong></a>
+						<a href="javascript:movePage('/member/goRegisterPage.do')"><strong>Create Account</strong></a>
 					</div>
 	
 				</div>

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.lhs.dto.MemberDto;
 import com.lhs.service.MemberService;
+
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,6 +53,16 @@ public class MemberController {
 	@RequestMapping("/member/goPassword.do")
 	public String goPassword() {
 		return "member/password";
+	}
+	
+	// 비밀번호 변경 페이지
+	@RequestMapping("/member/changePassword.do")
+	public String changePassword() {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+//		map.put("msg", "비밀번호 변경하세요");
+//		map.put("nextPage", "/member/changePassword"); 
+//		return map;
+		return "member/changePassword";
 	}
 	
 	/*
@@ -152,6 +164,8 @@ public class MemberController {
     		// 쿠키와 세션 : 로그인 성공 시 사용자 정보를 세션에 저장
             HttpSession session = request.getSession();
             session.setAttribute("memberId", memberDto.getMemberId()); // 예시로 memberId를 세션에 저장
+            // memberId 세션의 유효시간을 1800초(30분)으로 설정
+            setSessionTimeout(session, 1800);
             
             // 로그인 성공시 체크 박스 선택에 따라 쿠키 생성 및 삭제
             System.out.println("쿠키 값 확인 : " + logCheck); // on, null
@@ -190,26 +204,80 @@ public class MemberController {
 	 	비밀번호 찾기 : password.jsp
 	 	memberId     --->     member_id  
 	 	email	     --->     email
+	 	
+	 	1. Service에서 생성된 임의 인증번호를 받기 위해서 HttpServletRequest request 사용하지 않고 Model model를 사용하여 받아온다 
+	 	   return 타입은 bolean -> String으로 변경 (결과 : 임시 인증번호를 받아왔다)
+	 	       주의사항 : 주의할 점은 이 방법은 동기적인 방식으로 작동하므로, 모델에 값을 설정한 후에 컨트롤러에서 즉시 이 값을 사용할 수 있다
+	 	       
+	 	2. number라는 값을 세션에 1분간 저장해보기
+	 	      세션을 사용하기 위해서 매개변수로 HttpServletRequest request 받아오고 
+	 	   HttpSession session = request.getSession(); 이렇게 사용
+	 	   
+	 	3. 세션에 암호화해서 임의 인증번호를 넣기 위해서 매개변수로 HttpServletRequest request 받아서 SeviceImpl에 전달해보기
+	 	
+	 	4. 세션은 서버에 저장이 되기 때문에 브라우저에서는 확인할 방법이 없어서 암호화해서 넣을 필요는 없음
+	 	
+	 	5. 세션키값이 memberId와 number이렇게 있는데 memberId은 30분,  number는 1분으로 세션 유효기간을 설정하기
+	 	   - Spring Boot가 아닌 경우에는 일반적으로 Maven으로 의존성 관리 도구를 사용하여 필요한 라이브러리를 프로젝트에 추가
+	 	   
+	 	6. setSessionTimeout 메서드 생성 (세션 유효시간 설정)  
+	 	   
 	 */
 	@RequestMapping("/member/password.do")
 	@ResponseBody
-	public HashMap<String, Object> password(MemberDto memberDto){
+	public HashMap<String, Object> password(MemberDto memberDto, Model model, HttpServletRequest request){ // import org.springframework.ui.Model;
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		
 		System.out.println("비밀번호 찾기 memberId : " + memberDto.getMemberId());
 		System.out.println("비밀번호 찾기 email : " + memberDto.getEmail());
 		
-		boolean passwordeMail = mService.Passwordchick(memberDto); // memberId와 email 일치하면 true
-		System.out.println("passwordeMail : " + passwordeMail);
+		String result = mService.Passwordchick(memberDto, model, request); // memberId와 email 일치하면 success, 일치하지 않으면 error
+		System.out.println("memberId와 email 일치하면 success, 일치하지 않으면 error : " + result);
 		
-		// 한 묶음으로 작성을 해줘야 한다!! (코드를 둘러본 결과)
+		
+		// 임의 인증번호 세션에 저장 하기 위해서 ServiceImpl에서 암호화 한것 가져와 지는지 확인해보기
+		HttpSession session = request.getSession();
+		System.out.println("ServiceImpl에서 생성된 임의 인증번호를 잘 받았는지 확인(model) : " + model.getAttribute("number")); // 임시 인증번호 (받았음)
+		System.out.println("ServiceImpl에서 생성된 임의 인증번호를 잘 받았는지 확인(session) : " + session.getAttribute("number"));
+		// ***결론 둘다 잘 받아진다
+		
+		// number 세션의 유효시간을 60초(1분)으로 설정
+	    session.setMaxInactiveInterval(60);
+		
+		// // 비밀번호 찾기 결과에 따라 다른 메시지 설정
+		if("success".equals(result)) { 
+			map.put("msg", "인증번호가 발송되었습니다"); 
+		}else { // error
+			map.put("msg", "비밀번호 찾기 실패!");
+		}
+		// 한 묶음으로 작성을 해줘야 한다!! (msg와 nextPage) 이렇게 작성을 안해주면  계속 기다림
 		map.put("nextPage", "/member/goPassword.do"); // memberId 또는 email이 일치하지 않으면
-		map.put("msg", "비밀번호 찾기 실패!"); // *****이 정보가 아니면 계속 기다리는것 같다*****
 		
 		return map;
 	}
 	
 	
+	/* 
+	     
+	 	비밀번호 변경
+	 	memberPw     --->     member_pw
+	*/
+	@RequestMapping("/member/change.do")
+	@ResponseBody
+	public HashMap<String, Object> pwchange(MemberDto memberDto){
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		System.out.println("비밀번호 변경 : " + memberDto.getMemberPw()); // 확인
+		
+		int result = mService.pwchange(memberDto); // update가 성공하면 1, 실패하면 0
+		
+		map.put("msg", "비밀번호가 변경되었습니다"); 
+		map.put("nextPage", "/member/goLoginPage.do");
+		
+		return map;
+	}
+		
+		
 	@RequestMapping("/admin/memberList.do")
 	@ResponseBody //비동기식 호출
 	public HashMap<String, Object> memberList(@RequestParam HashMap<String, Object> params) {
@@ -239,6 +307,26 @@ public class MemberController {
 		map.put("result",result);
 		return map;
 
+	}
+	
+	
+	// 세션에 저장된 임시 인증번호를 가져오는 컨트롤러 메서드
+	@RequestMapping("/member/getSessionNumber.do")
+	@ResponseBody
+	public String getSessionNumber(HttpSession session) {
+	    return (String) session.getAttribute("number");
+	}
+	
+	
+	/*
+	 	세션의 유효기간을 설정하는 메서드 
+	 	
+	 	세션키값                           유효시간
+	 	memberId        30분 (로그인)
+	 	number          1분  (임시 인증번호)
+	*/
+	public void setSessionTimeout(HttpSession session, int seconds) {
+	    session.setMaxInactiveInterval(seconds);
 	}
 
 }

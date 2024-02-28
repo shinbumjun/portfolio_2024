@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -19,6 +21,8 @@ import com.lhs.service.MemberService;
 import com.lhs.util.EmailUtil;
 import com.lhs.util.PasswordUtil;
 import com.lhs.util.Sha512Encoder;
+
+
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -136,6 +140,8 @@ public class MemberServiceImpl implements MemberService {
 				// 이메일 발송 실패 시 예외처리 
 				emailUtil.sendMail(emailDto); // @Autowired 타입으로 주입받고 사용
 				// emailUtil.sendHtmlMail(emailDto);
+				
+				// 어떤 값으로 이루어진 이메일을 발송했는지 확인해보기
 				System.out.println("이메일을 발신하는 사람의 이메일 주소 : " + emailDto.getFrom()); // sinbumjun123@naver.com
 				System.out.println("이메일을 수신하는 사람의 이메일 주소 : " + emailDto.getReceiver()); // sinbumjun123@naver.com
 				System.out.println("이메일의 본문 내용 설정 : " + emailDto.getText()); // <a href='https://www.notion ...
@@ -151,7 +157,7 @@ public class MemberServiceImpl implements MemberService {
 
 	// 비밀번호 찾기
 	@Override
-	public boolean Passwordchick(MemberDto memberDto) {
+	public String Passwordchick(MemberDto memberDto, Model model, HttpServletRequest request) {
 		
 		// MemberDto member = mDao.Passwordchick(memberDto);
 		HashMap<String, String> member = new HashMap<String,String>(); // DTO를 사용하지 않고 HashMap 형식으로 사용해보고 싶어서 사용
@@ -159,15 +165,71 @@ public class MemberServiceImpl implements MemberService {
 		member.put("email", memberDto.getEmail()); //
 		
 		MemberDto PasswordEmailOK = mDao.Passwordchick(member); // null값이면 일치하지 않는다
+		
 		if(PasswordEmailOK != null) { // 일치하면 6자리 인증번호 발송
 			String number = PasswordUtil.generateRandomPassword();
-			System.out.println("임의 숫자 6자리 : " + number);
+			System.out.println("임의 숫자 6자리 : " + number); // 임의 숫자 6자리
 			
-			// 
+			EmailDto emailDto = new EmailDto();
+			emailDto.setFrom("sinbumjun123@naver.com"); // 이메일을 발신하는 사람의 이메일 주소
+			emailDto.setReceiver(memberDto.getEmail()); // 이메일을 수신하는 사람의 이메일 주소, 회원가입한 이메일로 메일 발송
+			System.out.println("비밀번호를 찾는 사람의 이메일 주소 : " + memberDto.getEmail());
+			emailDto.setSubject("비밀번호 찾기를 위한 인증번호입니다"); // 이메일의 제목
+			emailDto.setText("인증번호 : " + number); // 이메일의 본문 내용 설정
 			
+			try {
+				emailUtil.sendMail(emailDto); // 이메일 발송
+
+				// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+				// *세션에 암호화된 인증번호 저장
+	            HttpSession session = request.getSession();
+				// *비밀번호 암호화
+				//Sha512Encoder encoder = Sha512Encoder.getInstance(); // SHA-512 암호화를 위한 인스턴스를 얻는다
+				
+				//String encodeTxt = encoder.getSecurePassword(number); // 비밀번호 암호화
+	            //System.out.println("인증번호 암호화 한것 : " + encodeTxt); // 3fbc8bfd4be1413f
+	            
+	            session.setAttribute("number", number); // 인증번호 암호화 한 것 전달, password.jsp에 값 찍어보기
+	            model.addAttribute("number", number);
+				// setAttribute("number", number); // 인증번호를 request에 담아서 보내본다
+				// ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+	            
+				//return true; // 발송한 인증번호는 세션에 저장하는게 맞는거 같다
+				return "success"; // 인증번호 발송 성공
+				
+			}catch (Exception e){
+				model.addAttribute("errorMessage", "인증번호 발송 실패헸습니다");
+				System.out.println("인증번호 발송 실패헸습니다 : " + emailUtil.toString());
+				
+				//return false;
+				return "error"; // 인증번호 발송 실패
+			}
+		}else {
+			// 사용자가 존재하지 않는 경우
+			model.addAttribute("errorMessage", "입력한 아이디 또는 이메일이 존재하지 않습니다.");
+	        
+	        // return false; // 사용자가 존재하지 않음
+	        return "error"; // 사용자가 존재하지 않음
 		}
+	}
+
+	// 비밀번호 변경
+	@Override
+	public int pwchange(MemberDto memberDto) {
 		
-		return false;
+		// *비밀번호 암호화
+		Sha512Encoder encoder = Sha512Encoder.getInstance(); // 1. SHA-512 암호화를 위한 인스턴스를 얻는다
+		System.out.println("encoder : " + encoder); 
+		
+		String passwd = memberDto.getMemberPw(); // 2. 브라우저에서 입력한 비밀번호
+		System.out.println("memberPw : " + memberDto.getMemberPw()); 
+		
+		String encodeTxt = encoder.getSecurePassword(passwd); // 3. 비밀번호 암호화
+		System.out.println("memberPw : " + encodeTxt); 
+		
+		memberDto.setMemberPw(encodeTxt); // 4. 암호화한 패쓰워드로 저장
+		
+		return mDao.pwchange(memberDto); 
 	}
 }
 

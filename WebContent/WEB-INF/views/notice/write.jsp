@@ -90,7 +90,7 @@ function customAjax(url, responseUrl) {
              alert(data.msg);
              var boardSeq = data.boardSeq;
              if(data.result == 1){
-                movePage(this, responseUrl);
+                movePage(responseUrl);
              } else {
                window.location.href="<c:url value='/index.do'/>";
              }
@@ -182,7 +182,7 @@ function customAjax(url, responseUrl) {
 
 									<div class="row">
 										<div class="col-md-12 text-right">
-										<a href="javascript:movePage(null, '/notice/list.do')">
+										<a href="javascript:movePage('/notice/list.do')">
 								       	 <button type="button" class="btn btn-primary">목록</button>
 								   		</a>	
 															

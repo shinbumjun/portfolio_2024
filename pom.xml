@@ -13,9 +13,19 @@
 		<maven.test.skip>true</maven.test.skip>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		
+		<!-- Spring Boot 버전 지정 -->
+	    <spring-boot.version>2.6.3</spring-boot.version>
 	</properties>
-
+	
 	<dependencies>
+		<!-- 세션 키값 유효시간을 각각 설정하기 위해서 -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-security</artifactId>
+		    <version>${spring-boot.version}</version>
+		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
 		<dependency>
 		    <groupId>org.mariadb.jdbc</groupId>

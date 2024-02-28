@@ -83,6 +83,15 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		and email = #{email};
 	</select>
 	
+	<!--  
+		    비밀번호 변경
+		  public int pwchange(MemberDto memberDto);
+		  memberPw          member_pw
+	-->
+	<update>
+		
+	</update>
+	
 	<delete id = "delMember" parameterType="HashMap">
 		
 	</delete>		

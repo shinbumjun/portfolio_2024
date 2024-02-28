@@ -6,9 +6,12 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.ui.Model;
+
 import com.lhs.dto.MemberDto;
 import com.lhs.exception.PasswordMissMatchException;
 import com.lhs.exception.UserNotFoundException;
+
 
 public interface MemberService {
 
@@ -34,7 +37,10 @@ public interface MemberService {
 	public boolean Welcomeemail(String email, HttpServletRequest request);
 
 	// 비밀번호 찾기
-	public boolean Passwordchick(MemberDto memberDto);
+	public String Passwordchick(MemberDto memberDto, Model model, HttpServletRequest request);
+
+	// 비밀번호 변경
+	public int pwchange(MemberDto memberDto);
 }
 
 
