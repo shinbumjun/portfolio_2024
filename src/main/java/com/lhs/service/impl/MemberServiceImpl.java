@@ -162,7 +162,7 @@ public class MemberServiceImpl implements MemberService {
 		// MemberDto member = mDao.Passwordchick(memberDto);
 		HashMap<String, String> member = new HashMap<String,String>(); // DTO를 사용하지 않고 HashMap 형식으로 사용해보고 싶어서 사용
 		member.put("memberId", memberDto.getMemberId()); // 
-		member.put("email", memberDto.getEmail()); //
+		member.put("email", memberDto.getEmail()); // 
 		
 		MemberDto PasswordEmailOK = mDao.Passwordchick(member); // null값이면 일치하지 않는다
 		

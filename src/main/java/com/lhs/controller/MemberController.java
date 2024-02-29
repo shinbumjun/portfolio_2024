@@ -3,6 +3,7 @@ package com.lhs.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +22,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.lhs.dto.MemberDto;
 import com.lhs.service.MemberService;
-
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,14 +55,39 @@ public class MemberController {
 		return "member/password";
 	}
 	
-	// 비밀번호 변경 페이지
+	/*
+	  	비밀번호 변경 페이지
+	  	여기서 memberId와 email을 받아야 하나?
+	  	
+	  	password.jsp 코드 추가
+	  	data: {
+		            memberId: memberId,
+		            email: email,
+		        },
+		        
+		*****최종 : 쿼리 문자열로 memberId와 email 값 전달 받음
+		movePage('/member/changePassword.do');
+		               --->
+		movePage('/member/changePassword.do?memberId=' + memberId + '&email=' + email);
+	 */
+	
 	@RequestMapping("/member/changePassword.do")
-	public String changePassword() {
+	public HashMap<String, Object> changePassword(@RequestParam("memberId") String memberId, @RequestParam("email") String email) {
+		// ModelAndView mv = new ModelAndView();
 		HashMap<String, Object> map = new HashMap<String, Object>();
-//		map.put("msg", "비밀번호 변경하세요");
-//		map.put("nextPage", "/member/changePassword"); 
-//		return map;
-		return "member/changePassword";
+		
+		System.out.println("비밀번호 변경 페이지 ID전달 : " + memberId); // sinbumjun
+		System.out.println("비밀번호 변경 페이지 email전달 : " + email); // sinbumjun123@naver.com
+		
+		// 여기까지는 memberId, email값들이 있으니까 mv에 담아서 보내보자
+		// mv.addObject("memberId", memberId);
+		// mv.addObject("email", email);
+		map.put("nextPage", "/member/changePassword");
+		map.put("memberId", memberId); // 
+		map.put("email", email); 
+		
+		// mv.setViewName("member/changePassword");
+		return map;
 	}
 	
 	/*
@@ -258,22 +283,49 @@ public class MemberController {
 	
 	
 	/* 
-	     
 	 	비밀번호 변경
-	 	memberPw     --->     member_pw
+	 	memberPw     --->     member_pw (변경)
+	 	memberId     --->     member_id (조건)
+		email	     --->     email     (조건)
+	 	
+	 	password.jsp 페이지에서 작성시
+	 	var memberId = $('#memberId').val(); // memberId 값 가져오기
+		var email = $('#email').val(); // email 값 가져오기
+		             --->
+		@RequestParam("memberId") 혹은 @RequestParam Map<String, String> paramMap 사용해서 값을 전달 받을 수 있다
+		
+		*****최종 
+		<input type="hidden" id="memberId" name="memberId" value="${memberId}" />
+		<input type="hidden" id="email" name="email" value="${email}" />
 	*/
 	@RequestMapping("/member/change.do")
 	@ResponseBody
 	public HashMap<String, Object> pwchange(MemberDto memberDto){
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		
+		// password.jsp에서 전달 받은 값
+		// var memberId = $('#memberId').val(); // memberId 값 가져오기
+		// var email = $('#email').val(); // email 값 가져오기
+		// 어떻게 값을 받나?
+		
+		System.out.println("비밀번호 변경시 특정되는 ID : " + memberDto.getMemberId()); // sinbumjun
+		System.out.println("비밀번호 변경시 특정되는 email : " + memberDto.getEmail()); // sinbumjun123@naver.com
+		
 		System.out.println("비밀번호 변경 : " + memberDto.getMemberPw()); // 확인
 		
 		int result = mService.pwchange(memberDto); // update가 성공하면 1, 실패하면 0
+		System.out.println("result : " + result);
 		
-		map.put("msg", "비밀번호가 변경되었습니다"); 
-		map.put("nextPage", "/member/goLoginPage.do");
-		
+		if(result == 1) {
+			System.out.println("비밀번호가 변경되었습니다!!!");
+			map.put("msg", "비밀번호가 변경되었습니다"); 
+			map.put("nextPage", "member/goLoginPage.do");
+			//map.put("nextPage", "/member/goLoginPage"); // 로그인 페이지로
+		}else {
+			System.out.println("비밀번호 변경이 실패되었습니다");
+			map.put("msg", "비밀번호 변경이 실패되었습니다"); 
+			map.put("nextPage", "/member/goPassword.do"); // 서버에서 비밀번호 변경을 실패하면 -> 비밀번호 변경 페이지로
+		}
 		return map;
 	}
 		

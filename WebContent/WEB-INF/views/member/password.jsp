@@ -10,9 +10,33 @@
 		$('#msgDiv').hide();
 		$("#loading-div-background").css({ opacity: 1 });
 		
+		
+		// ***카운터 변수 초기화
+		var counter = 60;
+		var interval; // interval 변수를 전역으로 선언하여 clearInterval()을 호출할 때 사용합니다.
+
+		// ***인증 확인 버튼 옆에 카운트 다운 업데이트하는 함수
+		function updateCountdown() {
+		    $('#countdown').text(counter);
+		    if (counter <= 0) {
+		        clearInterval(interval); // 카운터가 0 이하이면 interval을 멈춥니다.
+		        $('#countdown').text(""); // 카운트 다운이 0이 되면 메시지를 지웁니다.
+		        $('#btnLogin').prop('disabled', false); // 인증번호 받기 버튼 활성화
+		        alert("인증번호를 다시 받으세요!"); // 카운트가 0이 되면 해당 메시지를 출력합니다.
+		    } else {
+		        counter--;
+		    }
+		}
+		
+		
 		// 인증 확인을 누르면 ->
 		$('#btnVerify').click(function(){
 		    var verificationCode = $('#verificationCode').val();
+		    var memberId = $('#memberId').val(); // memberId 값 가져오기
+		    console.log(memberId)
+	        var email = $('#email').val(); // email 값 가져오기
+	        console.log(email)
+	        
 		    if(verificationCode == ''){
 		        var msgTag = $('<strong>').text("인증번호를 입력해주세요");
 		        $('#msgDiv').html(msgTag).show();
@@ -24,11 +48,22 @@
 		        url: '<%= request.getContextPath() %>/member/getSessionNumber.do',
 		        type: 'GET',
 		        dataType: 'text',
+		        data: {
+		            memberId: memberId,
+		            email: email,
+		        },
 		        success: function(sessionVerificationCode) {
 		            console.log("서버에서 받아온 세션 인증번호: " + sessionVerificationCode);
 		            if(sessionVerificationCode == verificationCode) { 
+		            	
+		            	var memberId = $('#memberId').val(); // memberId 값 가져오기 찍힘
+		    		    console.log("memberId : " + memberId)
+		    	        var email = $('#email').val(); // email 값 가져오기 찍힘
+		    	        console.log("email : " + email)
+
 		             	// 인증번호가 일치하면 비밀번호 변경 페이지로 이동 
-		                movePage('/member/changePassword.do'); // 수정된 부분
+		                // movePage('/member/changePassword.do'); // 수정된 부분
+		                movePage('/member/changePassword.do?memberId=' + memberId + '&email=' + email); // 수정된 부분
 		                console.log("인증번호가 일치합니다!")
 		                alert("인증번호가 일치합니다!")
 		            } else {
@@ -47,6 +82,7 @@
 		});
 	    
 		
+		// // 인증번호 받기 버튼 클릭시 카운터 시작
 		$('#btnLogin').click(function(){
 			if( $('#memberId').val() == '' || $('#email').val() == '' ){
 				var msgTag = $('<strong>').text("모두 입력해주세요");
@@ -84,6 +120,14 @@
 					console.log(errorThrown);
 				}
 			});
+			
+		    // ***카운터 시작
+		    counter = 60; // 카운터 초기화
+		    $('#btnLogin').prop('disabled', true); // 인증번호 받기 버튼 비활성화
+		    interval = setInterval(function() { // interval 변수에 setInterval()을 할당하여 전역에서 clearInterval()을 사용할 수 있도록 합니다.
+		        updateCountdown();
+		    }, 300);
+			
 		});
 	});
 </script>
@@ -139,6 +183,9 @@
 									인증 확인 버튼을 누르면 #btnVerify 통해서 받은 값을 세션에 저장된 값이랑 확인
 								 -->
 								<div class="col-md-12 col-sm-12 col-12 text-right">
+									<!-- 카운트 다운을 표시할 요소 -->
+    								<span id="countdown" style="margin-right: 10px;"></span> <!-- 여기에 추가 -->
+    								
 									<input type="text" id="verificationCode" name="verificationCode" class="form-control" placeholder="인증번호" required=""><br/>
 								    <button type="button" id="btnVerify" class="btn btn-primary">인증 확인</button>
 								    <button type="button" id="btnLogin" class="btn btn-primary">인증번호 받기</button>

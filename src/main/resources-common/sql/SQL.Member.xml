@@ -86,12 +86,24 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<!--  
 		    비밀번호 변경
 		  public int pwchange(MemberDto memberDto);
-		  memberPw          member_pw
+		  
+	 	  memberPw          member_pw (변경)
+	 	  memberId          member_id (조건)
+		  email	          email     (조건)
+		  
+		  UPDATE S_shinbumjun.member
+		  SET member_pw=12345
+		  WHERE member_id='sinbumjun' AND email='sinbumjun123@naver.com';
 	-->
-	<update>
-		
+	<update id="pwchange" parameterType="MemberDto">
+	    UPDATE S_shinbumjun.member
+	    SET member_pw = #{memberPw}
+	    WHERE member_id = #{memberId}
+	    AND email = #{email};
 	</update>
-	
+
+
+
 	<delete id = "delMember" parameterType="HashMap">
 		
 	</delete>		

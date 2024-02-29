@@ -6,6 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script type="text/javascript">
 	$(document).ready(function(){
+		var ctx = '<%= request.getContextPath() %>';
 		$('#msgDiv').hide();
 		$("#loading-div-background").css({ opacity: 1 });
 		
@@ -26,24 +27,34 @@
 			// 입력한 비밀번호 둘다 일치하면 이동
 			$("#loading-div-background").css({'z-index' : '9999'}).show();
 			var formData = new FormData(document.loginForm);
+			
 			$.ajax({
 				url: "<c:url value='/member/change.do'/>",
 				type: "POST",
-				data: formData,
+				data: formData, // 데이터 보내는것
 				dataType:'TEXT',
 				cache: false,
 				processData: false,
 				contentType: false,
-				success: function(data, textStatus, jqXHR) {
+				success: function(data, textStatus, jqXHR) { // 서버에서 성공적으로 값을 가져오면
 					data = $.parseJSON(data);
 					console.log(data);
-					if(true){
-						var msgTag = $("<strong>").text(data.msg);
-						$('#msgDiv').html(msgTag).show();
-						$("#loading-div-background").hide();	// overlay 숨기기
+					if(data.msg == "비밀번호가 변경되었습니다"){ // msg값이 성공시
+						
+						// window.location.href = ctx + data.nextPage; //              http://localhost:8088/lhsmember/goLoginPage.do
+						// window.location.href = data.nextPage;//                     http://localhost:8088/lhs/member/goLoginPage.do
+						movePage('/member/goLoginPage.do'); // 이렇게 해야 정상적으로 동작한다         http://localhost:8088/lhs/index.do
+						
+						// var msgTag = $("<strong>").text(data.msg);
+						// $('#msgDiv').html(msgTag).show();
+						// $("#loading-div-background").hide();	// overlay 숨기기
+						
 					}
 					else {
-						window.location.href = ctx + data.nextPage;
+						// window.location.href = ctx + data.nextPage;
+						// window.location.href = data.nextPage;
+						movePage('/member/goPassword.do');
+						
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -80,7 +91,12 @@
 								
 								<!-- memberId -->
 								<div class="form-group">
-									<input type="text" id="memberId" name="memberId" class="form-control" placeholder="USER ID" required="">
+									<input type="hidden" id="memberId" name="memberId" value="${memberId}" />
+								</div>
+								
+								<!-- email -->
+								<div class="form-group">
+									<input type="hidden" id="email" name="email" value="${email}" />
 								</div>
 								
 								<!-- memberPw -->
