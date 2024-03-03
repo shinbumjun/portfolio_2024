@@ -37,6 +37,5 @@ public interface BoardService {
 	 * @return
 	 */
 	public int delete(HashMap<String, Object> params);
-	
 
 }

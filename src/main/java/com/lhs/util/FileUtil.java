@@ -17,7 +17,7 @@ public class FileUtil {
 	private Logger logger = Logger.getLogger(FileUtil.class);
 	
 	// config.ini 에 설정해둔 값을 찾아서 사용한다.
-	@Value("#{config['project.file.upload.location']}")
+	@Value("#{config['project.file.upload.location']}") // 환경 변수에 있는 값을 저장해주는것
 	private String saveLocation;
 	
 	
@@ -31,18 +31,18 @@ public class FileUtil {
 	/**
 	 * 파일 복사(저장) 
 	 */
-	public void copyFile(MultipartFile mf, String fakename) throws IOException {
+	public void copyFile(MultipartFile mf, String fakename) throws IOException { // MultipartFile파일, fakename 받는다
 		//1. 디렉토리(폴더) 지정.
 		File destDir = new File(this.saveLocation);// 지정 
-		if(!destDir.exists()) {	//존재하지 않으면 
-			destDir.mkdirs();//만들라 
+		if(!destDir.exists()) {	// 폴더가 존재하지 않으면 
+			destDir.mkdirs();//만들라, 있으면 생략 
 		}
 		// 2. 파일 지정 [저장 디렉토리 (경로담긴), 저장할 파일명] 
 		File destFile = new File(destDir, fakename);// (저장할 폴더,저장할 파일명) 
 		
 		//FileCopyUtils.copy([file data], target(디렉토리, 파일명);
 		//FileCopyUtils 활용하여 임시저장된 사진파일을 지정한 위치로 복사한다(물리적 위치에 실제저장). 
-		FileCopyUtils.copy(mf.getBytes(), destFile);		
+		FileCopyUtils.copy(mf.getBytes(), destFile); // 바이너리를 읽어서 카피		
 	}
 
 	/**

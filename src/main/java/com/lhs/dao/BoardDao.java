@@ -58,6 +58,10 @@ public interface BoardDao {
 	 * @return
 	 */
 	public int delete(HashMap<String, Object> params);
+
+
+	// fakename 만든것 업로드
+	public int addAttFile(HashMap<String, Object> map);
 	
 	
 }

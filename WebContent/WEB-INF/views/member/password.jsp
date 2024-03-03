@@ -10,6 +10,7 @@
 		$('#msgDiv').hide();
 		$("#loading-div-background").css({ opacity: 1 });
 		
+		// 예외1) 다른 페이지로 갈 경우 초기화
 		
 		// ***카운터 변수 초기화
 		var counter = 60;
@@ -22,7 +23,7 @@
 		        clearInterval(interval); // 카운터가 0 이하이면 interval을 멈춥니다.
 		        $('#countdown').text(""); // 카운트 다운이 0이 되면 메시지를 지웁니다.
 		        $('#btnLogin').prop('disabled', false); // 인증번호 받기 버튼 활성화
-		        alert("인증번호를 다시 받으세요!"); // 카운트가 0이 되면 해당 메시지를 출력합니다.
+		        // alert("인증번호를 다시 받으세요!"); // 카운트가 0이 되면 해당 메시지를 출력합니다 
 		    } else {
 		        counter--;
 		    }
@@ -120,6 +121,8 @@
 					console.log(errorThrown);
 				}
 			});
+			
+			// 예외2) 인증번호가 발송되었습니다
 			
 		    // ***카운터 시작
 		    counter = 60; // 카운터 초기화

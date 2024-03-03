@@ -13,8 +13,17 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	
 	</select>
 	
+	<!-- 
+		글 작성
+		public int write(HashMap<String, Object> params);
+		{memberNick=, is_ajax=true, memberIdx=, action=contact_send, title=신범준 제목, content=신범준 내용, memberId=sinbumjun, typeSeq=2, boardSeq=9}
+		useGeneratedKeys="true" keyProperty="boardSeq"  : 글 번호
+	-->
 	<insert id ="write" parameterType="HashMap" useGeneratedKeys="true" keyProperty="boardSeq" >
-		
+		INSERT INTO S_shinbumjun.board
+	    	(type_seq, member_id, member_nick, title, content, has_file, hits, create_dtm, update_dtm)
+	    VALUES
+	    	(#{typeSeq}, #{memberId}, #{memberNick}, #{title}, #{content}, NULL, 0, DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'), DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
 	</insert>
 	
 	<select id="read" parameterType="HashMap" resultType = "HashMap">
@@ -35,5 +44,24 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		
 	</delete>
 
+	<!-- 
+		 fakename 만든것 업로드
+		 public int addAttFile(HashMap<String, Object> map); 
+		 
+		 map.put("Type", mFile.getContentType());
+		 map.put("Filename", mFile.getOriginalFilename());
+		 map.put("Name", mFile.getName());
+		 map.put("Size", mFile.getSize());
+	-->
+	<insert id="addAttFile" parameterType="HashMap">
+	    INSERT INTO S_shinbumjun.board_attach
+	    (type_seq, board_seq, file_name, fake_filename, file_size, file_type, save_loc, create_dtm)
+	    VALUES
+	    (2, 2, #{Filename}, #{fakename}, #{Size}, #{Type}, '', DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
+	</insert>
 
 </mapper>
+
+
+
+

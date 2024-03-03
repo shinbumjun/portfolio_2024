@@ -9,7 +9,7 @@
 	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
 		<property name="driverClassName" value="org.mariadb.jdbc.Driver"/>
 		<property name="jdbcUrl" value="jdbc:mariadb://jyeory.cafe24.com:3306/S_shinbumjun"/>
-		<property name="username" value="shinbumjun"/>
+		<property name="username" value=""/>
 		<property name="password" value=""/>
 		<property name="minimumIdle" value="5"/>
 		<property name="maximumPoolSize" value="20"/>
