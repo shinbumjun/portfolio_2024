@@ -1,7 +1,10 @@
 package com.lhs.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.lhs.dto.BoardDto;
 import com.lhs.service.AttFileService;
 import com.lhs.service.BoardService;
 import com.lhs.util.FileUtil;
@@ -30,12 +34,21 @@ public class BoardController {
 	private String typeSeq = "2";
 
 	@RequestMapping("/board/list.do")
-	public ModelAndView goLogin(@RequestParam HashMap<String, String> params){
+	public ModelAndView goLogin(BoardDto boardDto){
 		ModelAndView mv = new ModelAndView();
 		
+		// 1. 모든 리스트
+		boardDto.setTypeSeq(typeSeq); // 자유게시판2
+		List<BoardDto> boardlist = bService.list(boardDto);
+		System.out.println("boardlist : " + boardlist);
+		// [BoaedDto [boardSeq=1, typeSeq=null, memberId=, memberNick=null, title=123, content=null, 
+		// hasFile=null, hits=0, createDtm=20240303155648, updateDtm=null], ... 
+		
+		mv.addObject("boardlist", boardlist); // 리스트 출력
 		mv.addObject("msg", "자유게시판");
 		mv.addObject("nextPage", "/board/list");
-
+		
+		System.out.println("boardlist : " + boardlist);
 		return mv;
 	}
 
@@ -76,36 +89,54 @@ public class BoardController {
 	}
 	
 	
-	//글쓰기 페이지로 	
+	// 2. 글쓰기 페이지로 	
 	@RequestMapping("/board/goToWrite.do")
-	public ModelAndView goToWrite(@RequestParam HashMap<String, Object> params) {
-		if(!params.containsKey("typeSeq")) {
-			params.put("typeSeq", this.typeSeq);
-		}
+	public ModelAndView goToWrite(BoardDto boardDto) {
 		ModelAndView mv = new ModelAndView();
+		
+		boardDto.setTypeSeq(typeSeq); // 자유게시판2
+
+		mv.addObject("typeSeq", boardDto.getTypeSeq()); // 2값 보냄
 		mv.setViewName("/board/write");
 		return mv;
 	}
 
+	
+	/*
+	  	3. 자유 게시판 업로드
+	  					       board_seq
+	  					       type_seq
+	 	memberId               member_id
+	  	title				   title
+	  	memberNick             member_nick
+	  	content				   content
+	  		                   hits
+	  	attFiles(파일)
+	  	attFiles(파일)
+	 */
 	@RequestMapping("/board/write.do")
 	@ResponseBody
-	public HashMap<String, Object> write(
-			@RequestParam HashMap<String, Object> params, 
-			MultipartHttpServletRequest mReq) {
+	public HashMap<String, Object> write(BoardDto boardDto, MultipartHttpServletRequest mReq, HttpServletRequest request) throws IOException{
+		HashMap<String, Object> map = new HashMap<String, Object>();
 		
-		if(!params.containsKey("typeSeq")) {
-			params.put("typeSeq", this.typeSeq); // 자유게시판 2로 박아놈
+		boardDto.setTypeSeq(typeSeq); // 자유게시판2
+		
+		int result = bService.write(boardDto, mReq.getFiles("attFiles"), request); // 1. 타입에 들어있는 리스트로 만들어서 보냄
+		System.out.println("result : " + result); // 1
+		
+		if(result == -1) { // 자유게시판 업로드가 되지 않았다면 
+			map.put("msg", "자유 게시판이 업로드 되지 않았습니다."); // 실패 메시지 설정
+			// map.put("resultMsg", request.getAttribute("errorMessage"));
 		}
 		
-		// int count = bService.upinsert(params, mReq.getFiles("attFiles")); 
-		int count = bService.write(params, mReq.getFiles("attFiles")); // 1. 타입에 들어있는 리스트로 만들어서 보냄
-		
-		System.out.println("params : " + params);
+		System.out.println("boardDto : " + boardDto);
 		// {memberNick=, is_ajax=true, memberIdx=, action=contact_send, title=신범준 제목, content=신범준 내용, memberId=sinbumjun, typeSeq=2, boardSeq=9}
 		System.out.println("mReq : " + mReq);
 		// org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest@66de9ccc
 
-		return null;
+		map.put("msg", "게시판이 성공적으로 등록되었습니다");
+		
+		return map;
 	}
 
 	@RequestMapping("/board/read.do")

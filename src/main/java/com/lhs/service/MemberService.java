@@ -41,6 +41,9 @@ public interface MemberService {
 
 	// 비밀번호 변경
 	public int pwchange(MemberDto memberDto);
+
+	// 별명 가져오기
+	public MemberDto Nick(MemberDto memberDto);
 }
 
 

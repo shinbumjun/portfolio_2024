@@ -22,8 +22,8 @@
 				
 				<thead>
 					<tr>
-						<th class="fw-30" align="center">&emsp;&emsp;&emsp;#</th>
-						<th align="center">제목</th>
+						<th class="fw-30" align="center">&emsp;&emsp;번호</th>
+						<th align="center">&emsp;&emsp;제목</th>
 						<th align="center">글쓴이</th>
 						<th align="center">조회수</th>
 						<th align="center">첨부파일</th>
@@ -31,20 +31,18 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td align="center">글번호</td>
-						<td>
-							<span class="bold">
-								<a href="javascript:movePage('/board/read.do?boardSeq=boardSeq&currentPage=currentPage')">
-									title
-								</a>
-							</span>
-                          </td>
-                          <td>memberNick</td>
-                          <td>hits</td>
-                          <td>hasFile</td>
-                          <td>createDate</td>
-                      </tr> 
+					
+			        <c:forEach var="list" items="${boardlist}" varStatus="board">
+			        <tr>
+			            <td class="text-center">${list.boardSeq} </td>
+			            <td>${list.title} </td>
+			            <td>${list.memberId} </td>
+			            <td>${list.hits} </td>
+			            <td>${list.hasFile} </td>
+			            <td>${list.createDtm} </td>
+			        </tr>
+			        </c:forEach>  
+					
 				</tbody>
 			</table>
 		</div>

@@ -102,8 +102,16 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	    AND email = #{email};
 	</update>
 
-
-
+	<!-- 
+		별명가져오기
+		public MemberDto Nick(MemberDto memberDto);
+	 -->
+	 <select id="Nick" parameterType="MemberDto" resultType="MemberDto">
+	 	select member_nick
+	 	from S_shinbumjun.`member`
+	 	where member_id = #{memberId};
+	 </select>
+	 
 	<delete id = "delMember" parameterType="HashMap">
 		
 	</delete>		

@@ -34,6 +34,9 @@ public interface MemberDao {
 
 	// 비밀번호 변경
 	public int pwchange(MemberDto memberDto);
+
+	// 별명가져오기
+	public MemberDto Nick(MemberDto memberDto);
 }
 
 

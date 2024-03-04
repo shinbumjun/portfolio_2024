@@ -5,7 +5,10 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 
 	<mapper namespace="com.lhs.dao.AttFileDao"> 
 		
-
+	<!-- 
+		2. 파일 업로드
+		public int addAttFile(HashMap<String, Object> params);
+	 -->
 	<insert id ="addAttFile" parameterType="HashMap" >
 		INSERT INTO S_shinbumjun.board_attach
 	    (type_seq, board_seq, file_name, fake_filename, file_size, file_type, save_loc, create_dtm)

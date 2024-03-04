@@ -231,6 +231,13 @@ public class MemberServiceImpl implements MemberService {
 		
 		return mDao.pwchange(memberDto); 
 	}
+
+	// 별명 가져오기
+	@Override
+	public MemberDto Nick(MemberDto memberDto) {
+		
+		return mDao.Nick(memberDto);
+	}
 }
 
 

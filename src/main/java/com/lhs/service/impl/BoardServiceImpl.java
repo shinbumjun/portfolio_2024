@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.lhs.dao.AttFileDao;
 import com.lhs.dao.BoardDao;
+import com.lhs.dto.BoardDto;
 import com.lhs.service.BoardService;
 import com.lhs.util.FileUtil;
 
@@ -26,9 +29,10 @@ public class BoardServiceImpl implements BoardService{
 	@Value("#{config['project.file.upload.location']}") // 환경 변수에 있는 값을 저장해주는것
 	private String saveLocation;
 	
+	// 1. 모든 리스트
 	@Override
-	public ArrayList<HashMap<String, Object>> list(HashMap<String, String> params) {
-		return bDao.list(params);
+	public List<BoardDto> list(BoardDto boardDto) {
+		return bDao.list(boardDto);
 	}
 
 	@Override
@@ -36,20 +40,19 @@ public class BoardServiceImpl implements BoardService{
 		return bDao.getTotalArticleCnt(params);
 	}
 
-	// 자유 게시판 업로드
+	// 3. 자유 게시판 업로드
 	@Override
-	public int write(HashMap<String, Object> params, List<MultipartFile> mFiles) {	
+	public int write(BoardDto boardDto, List<MultipartFile> mFiles, HttpServletRequest request) throws IOException {	
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		
 		// {memberNick=, is_ajax=true, memberIdx=, action=contact_send, title=신범준 제목, content=신범준 내용, memberId=sinbumjun, typeSeq=2, boardSeq=9}
-		int count = bDao.write(params); 
-		System.out.println("params : " + params.get("boardSeq")); // 12
-		System.out.println(count); // 1
+		int result = bDao.write(boardDto); 
+		System.out.println("boardDto : " + boardDto.getTypeSeq()); // 12
+		System.out.println(result); // 1
 		
-		//1. board DB에 글 정보등록 + hasFile 
-		int write = 0;
-		//return write;
-		
+		if(result == 0) {
+			 return -1;
+		}
 //		MultipartHttpServletRequest)
 //		application/pdf
 //		오라클정리.pdf
@@ -82,22 +85,33 @@ public class BoardServiceImpl implements BoardService{
 				// map.put("Name", mFile.getName()); //
 				map.put("size", mFile.getSize());
 				map.put("fakename", fakename);
-				map.put("boardSeq", params.get("boardSeq"));
-				map.put("typeSeq", params.get("typeSeq"));
+				map.put("boardSeq", boardDto.getBoardSeq());
+				map.put("typeSeq", boardDto.getTypeSeq());
 				map.put("saveLocation", saveLocation);
 				System.out.println("map : "+ map);
 				
-				int count2 = attFileDao.addAttFile(map); // 예외가 나올경우
-				System.out.println("count2 : " + count2);
+				// 파일 사이즈가 0이 아닐때만 inset함 
+				if(mFile.getSize() != 0) {
+					// 첨부 파일 추가
+					int success = attFileDao.addAttFile(map);
+					System.out.println("success : " + success);
+					
+					// 파일 업로드가 실패한 경우 예외 던지기
+					if(success == 0) {
+						throw new IOException("파일이 업로드 되지 않았습니다");
+					}
+				}
 				
 			}catch(IOException e){
-				e.printStackTrace();
+				// request 객체는 Spring MVC의 컨트롤러나 서블릿에서만 직접 사용할 수 있다 (컨트롤러에서 받아야 한다)
+				request.setAttribute("errorMessage", e.getMessage()); // 에러메시지 받기 위해서 
+			    // 파일 업로드 실패 예외 메시지 던지고 -1 반환
+			    return 0;
 			}
 		}
 		
-		
-		System.out.println("params : " + params);
-		return 0;
+		System.out.println("boardDto : " + boardDto);
+		return 1; // 업로드를 하고 성공한 경우
 	}
 
 	

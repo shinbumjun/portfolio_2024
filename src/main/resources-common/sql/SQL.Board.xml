@@ -4,9 +4,19 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
 
 <mapper namespace="com.lhs.dao.BoardDao">
-	<!-- resultType은 반드시 있어야 함 -->
-	<select id="list" parameterType="HashMap" resultType="HashMap">
-	
+
+	<!-- 
+		1. 모든 리스트  
+		public BoardDto list(BoardDto boardDto); 
+		
+		(브라우저에 출력될 데이터) 번호, 제목, 글쓴이, 조회수, 첨부파일, 작성일 (조건 type_seq=2)
+	-->
+	<select id="list" parameterType="BoardDto" resultType="BoardDto">
+	    SELECT board_seq, title, member_id, hits, has_file, create_dtm
+		FROM S_shinbumjun.board
+		WHERE type_seq = #{typeSeq}
+		ORDER BY board_seq desc
+		LIMIT 15;
 	</select>
 		
 	<select id="getTotalArticleCnt" parameterType="HashMap" resultType="int">
@@ -14,12 +24,12 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<!-- 
-		글 작성
-		public int write(HashMap<String, Object> params);
+		3. 자유 게시판 업로드
+		public int write(BoardDto boardDto);
 		{memberNick=, is_ajax=true, memberIdx=, action=contact_send, title=신범준 제목, content=신범준 내용, memberId=sinbumjun, typeSeq=2, boardSeq=9}
 		useGeneratedKeys="true" keyProperty="boardSeq"  : 글 번호
 	-->
-	<insert id ="write" parameterType="HashMap" useGeneratedKeys="true" keyProperty="boardSeq" >
+	<insert id ="write" parameterType="boardDto" useGeneratedKeys="true" keyProperty="boardSeq" >
 		INSERT INTO S_shinbumjun.board
 	    	(type_seq, member_id, member_nick, title, content, has_file, hits, create_dtm, update_dtm)
 	    VALUES

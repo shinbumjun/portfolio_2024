@@ -1,18 +1,27 @@
 package com.lhs.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.web.multipart.MultipartFile;
+
+import com.lhs.dto.BoardDto;
 
 public interface BoardService {
 
-	public ArrayList<HashMap<String, Object>> list(HashMap<String, String> params);
+	// 참고 : ArrayList<HashMap<String, Object>> : HashMap을 요소로 가지고 있는 배열 리스트
+	
+	// 1. 모든 리스트
+	public List<BoardDto> list(BoardDto boardDto);
 	
 	public int getTotalArticleCnt(HashMap<String, String> params);
 	
-	public int write(HashMap<String, Object> params, List<MultipartFile> mFiles);
+	// 3. 자유 게시판 업로드
+	public int write(BoardDto boardDto, List<MultipartFile> mFiles, HttpServletRequest request) throws IOException;
 
 	/**
 	 * 글 조회  

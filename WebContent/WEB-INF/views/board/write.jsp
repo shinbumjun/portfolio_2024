@@ -71,7 +71,8 @@
 				return;		
 			}
 			$('#content').val(content);
-			customAjax("<c:url value='/board/write.do' />", "/board/list.do");
+			// /board/write.do에 대한 POST 요청이며, 요청이 성공하면 /board/list.do 페이지로 이동
+			customAjax("<c:url value='/board/write.do' />", "/board/list.do"); 
 	});
 });
 
@@ -117,14 +118,14 @@ function customAjax(url, responseUrl) {
 						<!-- Useful Elements -->
 						<div class="card card-default">
 							<div class="card-heading card-heading-transparent">
-								<h2 class="card-title">공지 글 작성 </h2>
+								<h2 class="card-title">자유게시판 글 작성 </h2>
 							</div>
 
 							<div class="card-block">
 
 								<form name="writeForm" class="validate" method="post" enctype="multipart/form-data" data-success="Sent! Thank you!" data-toastr-position="top-right">
 									<input type="hidden" name="memberId" value="${ sessionScope.memberId }"/>
-									<input type="hidden" name="memberIdx" value="${ sessionScope.memberIdx }"/>
+									<!-- input type="hidden" name="memberIdx" value="${ sessionScope.memberIdx }"/ -->
 									<fieldset>
 										<!-- required [php action request] -->
 										<input type="hidden" name="action" value="contact_send" />

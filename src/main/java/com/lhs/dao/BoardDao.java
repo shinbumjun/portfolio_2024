@@ -2,14 +2,14 @@ package com.lhs.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import com.lhs.dto.BoardDto;
 
 public interface BoardDao {
-	/**
-	 * 모든 리스트 select  
-	 * @param typeSeq
-	 * @return
-	 */
-	public ArrayList<HashMap<String, Object>> list(HashMap<String, String> params);
+	
+	// 1. 모든 리스트  + Java 코드에서는 결과를 단일 객체가 아닌 리스트로 받아야 함
+	public List<BoardDto> list(BoardDto boardDto);
 	
 	/**
 	 * 총 글 수 
@@ -19,12 +19,8 @@ public interface BoardDao {
 	
 	public int getTotalArticleCnt(HashMap<String, String> params);
 	
-	/**
-	 * 글 작성 insert 
-	 * @param params
-	 * @return
-	 */
-	public int write(HashMap<String, Object> params);
+	// 3. 자유 게시판 업로드
+	public int write(BoardDto boardDto);
 	
 	/**
 	 * 글 조회  
@@ -58,10 +54,5 @@ public interface BoardDao {
 	 * @return
 	 */
 	public int delete(HashMap<String, Object> params);
-
-
-	// fakename 만든것 업로드
-	public int addAttFile(HashMap<String, Object> map);
-	
 	
 }

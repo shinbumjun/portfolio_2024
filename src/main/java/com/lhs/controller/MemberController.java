@@ -185,10 +185,13 @@ public class MemberController {
 		System.out.println("로그인을 성공하면 true : " + result);
 		
 		if(result) { // 로그인 성공이면 true
+			MemberDto Nick = mService.Nick(memberDto);// 별명 가져오기
+			System.out.println("Nick : " + Nick);
 			
     		// 쿠키와 세션 : 로그인 성공 시 사용자 정보를 세션에 저장
             HttpSession session = request.getSession();
             session.setAttribute("memberId", memberDto.getMemberId()); // 예시로 memberId를 세션에 저장
+            session.setAttribute("memberNick", Nick.getMemberNick());
             // memberId 세션의 유효시간을 1800초(30분)으로 설정
             setSessionTimeout(session, 1800);
             

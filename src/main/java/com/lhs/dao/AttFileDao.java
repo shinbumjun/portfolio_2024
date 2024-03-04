@@ -8,11 +8,7 @@ import java.util.List;
 
 public interface AttFileDao {
 
-	/**
-	 * 첨부파일 정보 등록 insert 
-	 * @param params
-	 * @return
-	 */
+	// 2. 파일 업로드
 	public int addAttFile(HashMap<String, Object> params);
 	
 	/** type, board_seq 통한 해당 게시글의 모든 첨부파일 불러오기. 
