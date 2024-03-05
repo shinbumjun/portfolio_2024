@@ -1,7 +1,6 @@
 package com.lhs.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,14 +9,19 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lhs.dto.BoardDto;
+import com.lhs.dto.PagingDto;
+import com.lhs.dto.TotalCountAndMaxPageDto;
 
 public interface BoardService {
 
 	// 참고 : ArrayList<HashMap<String, Object>> : HashMap을 요소로 가지고 있는 배열 리스트
 	
-	// 1. 모든 리스트
-	public List<BoardDto> list(BoardDto boardDto);
+	// 1. 모든 리스트 -> 페이징한 리스트
+	public List<BoardDto> list(BoardDto boardDto, PagingDto pagingDto);
 	
+	// 총 페이지 수를 가져오기 위해서 작성
+	public TotalCountAndMaxPageDto getTotalCountAndMaxPage(PagingDto pagingDto);
+
 	public int getTotalArticleCnt(HashMap<String, String> params);
 	
 	// 3. 자유 게시판 업로드
@@ -47,4 +51,5 @@ public interface BoardService {
 	 */
 	public int delete(HashMap<String, Object> params);
 
+	
 }

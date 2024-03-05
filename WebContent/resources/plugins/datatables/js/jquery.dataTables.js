@@ -5062,6 +5062,8 @@
 	 *  @param {int} tn Technical note id to get more information about the error.
 	 *  @memberof DataTable#oApi
 	 */
+	var logExecuted = false; // 변수 선언
+	
 	function _fnLog( settings, level, msg, tn )
 	{
 		msg = 'DataTables warning: '+
@@ -5093,6 +5095,7 @@
 		}
 		else if ( window.console && console.log ) {
 			console.log( msg );
+			logExecuted = true; // 한 번 실행되었음을 표시
 		}
 	}
 	

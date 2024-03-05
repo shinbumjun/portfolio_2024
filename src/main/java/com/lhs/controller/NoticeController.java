@@ -27,29 +27,6 @@ public class NoticeController {
 
 	private String typeSeq = "1";
 
-	@RequestMapping("/notice/list.do")
-	public ModelAndView goLogin(@RequestParam HashMap<String, String> params){
-		ModelAndView mv = new ModelAndView();
-		if(!params.containsKey("typeSeq")) {
-			params.put("typeSeq", this.typeSeq);
-		}
-		mv.setViewName("notice/list");
-
-		return mv;
-	}
-
-
-	//글쓰기 페이지로 	
-	@RequestMapping("/notice/goToWrite.do")
-	public ModelAndView goToWrite(@RequestParam HashMap<String, Object> params) {
-		if(!params.containsKey("typeSeq")) {
-			params.put("typeSeq", this.typeSeq);
-		}
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("/notice/write");
-		return mv;
-	}
-
 	@RequestMapping("/notice/write.do")
 	@ResponseBody
 	public HashMap<String, Object> write(@RequestParam HashMap<String, Object> params,

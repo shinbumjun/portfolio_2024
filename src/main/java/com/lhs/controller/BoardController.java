@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +16,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.lhs.dto.BoardDto;
+import com.lhs.dto.PagingDto;
+import com.lhs.dto.TotalCountAndMaxPageDto;
 import com.lhs.service.AttFileService;
 import com.lhs.service.BoardService;
 import com.lhs.util.FileUtil;
@@ -33,33 +34,64 @@ public class BoardController {
 
 	private String typeSeq = "2";
 
+	// 자유 게시판 (페이징 : 페이지 사이즈와 현재 페이지는 쿼리 문자열로 가져와야 한다)
 	@RequestMapping("/board/list.do")
-	public ModelAndView goLogin(BoardDto boardDto){
+	public ModelAndView goLogin(BoardDto boardDto, PagingDto pagingDto, @RequestParam(defaultValue = "1") int currentPage){
 		ModelAndView mv = new ModelAndView();
 		
-		// 1. 모든 리스트
-		boardDto.setTypeSeq(typeSeq); // 자유게시판2
-		List<BoardDto> boardlist = bService.list(boardDto);
-		System.out.println("boardlist : " + boardlist);
-		// [BoaedDto [boardSeq=1, typeSeq=null, memberId=, memberNick=null, title=123, content=null, 
-		// hasFile=null, hits=0, createDtm=20240303155648, updateDtm=null], ... 
+//		// 페이징 구현하기
+//		System.out.println("페이징을 하기 위해서 만든 Dto : " + pagingDto); // PagingDto [pageSize=10, currentPage=null]
+//		
+//		// 페이징을 하기 위해서는 페이지 사이즈(pageSize=10), 현재 페이지(currentPage)를 요청 파라미터로 받아와야 한다
+//		pagingDto.setCurrentPage(currentPage);
+//		System.out.println("현재 페이지 : " + pagingDto.getCurrentPage()); // 처음 값이 안들어오면 1
+//		
+//		// 총 페이지 수를 가져오기 위해서 작성 (수정)
+//		// 총 게시글 수도 필요할 것 같다
+//		int totalCount = bService.MaxPage(pagingDto);
+//		System.out.println("총 게시글 수 : " + totalCount); // 총 게시글 수 : 5166
+//		int maxPage = (int) Math.ceil((double) totalCount / pagingDto.getPageSize()); // 총 페이지 수 계산
+//	    System.out.println("총 페이지 : " + maxPage); // 총 페이지 : 517
+//	    
+//	    mv.addObject("currentPage", pagingDto.getCurrentPage()); // 현재 페이지		
+//	    mv.addObject("MaxPage", maxPage); // 총 페이지		
+	    
+		// 총 페이지 수와 총 게시글 수를 가져오기
+		TotalCountAndMaxPageDto totalCount = bService.getTotalCountAndMaxPage(pagingDto);
+		System.out.println("총 게시글c : " + totalCount.getTotalCount());  // 총 게시글c : 5166
+		System.out.println("총 페이지c : " + totalCount.getMaxPage()); // 총 페이지c : 517
+		
+	    // 리스트 가져오기
+	    // 페이징 정보를 이용하여 특정 범위의 게시글 리스트 가져오기
+		pagingDto.setCurrentPage(currentPage);
+	    boardDto.setTypeSeq(typeSeq); // 자유게시판2
+	    
+		List<BoardDto> boardlist = bService.list(boardDto, pagingDto); // 자유 게시판 2, [pageSize=10, currentPage=1]
+		System.out.println("boardlist : " + boardlist); // boardlist : [BoaedDto [boardSeq=10763,... 10개 가져오기
 		
 		mv.addObject("boardlist", boardlist); // 리스트 출력
 		mv.addObject("msg", "자유게시판");
 		mv.addObject("nextPage", "/board/list");
 		
-		System.out.println("boardlist : " + boardlist);
+		// 페이징 정보 전달
+	    mv.addObject("currentPage", currentPage); // currentPage=1 : 현재 페이지
+	    mv.addObject("maxPage", totalCount.getMaxPage()); // maxPage=517 : 총 페이지 수
+	    
+	    // 컨트롤러에서 PagingDto를 사용하여 startPage와 endPage 값을 계산하고 모델에 추가
+	    PagingDto paging = new PagingDto();
+	    paging.setCurrentPage(currentPage);
+	    int startPage = paging.calculateStartPage();
+	    int endPage = paging.calculateEndPage(totalCount.getMaxPage());
+
+	    // 모델에 startPage와 endPage 추가
+	    mv.addObject("startPage", startPage);
+	    mv.addObject("endPage", endPage);
+	    
+		System.out.println("jsp에 보내는 내용들 : " + mv);
 		return mv;
 	}
-
-	@RequestMapping("/test.do")
-	public ModelAndView test() {
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("test");
-		return mv;
-	}
-
 	
+	// 파일 다운로드
 	@RequestMapping("/board/download.do")
 	@ResponseBody
 	public byte[] downloadFile(@RequestParam int fileIdx, HttpServletResponse rep) {
@@ -87,20 +119,6 @@ public class BoardController {
 		// /board/download.do?fileIdx=1
 		
 	}
-	
-	
-	// 2. 글쓰기 페이지로 	
-	@RequestMapping("/board/goToWrite.do")
-	public ModelAndView goToWrite(BoardDto boardDto) {
-		ModelAndView mv = new ModelAndView();
-		
-		boardDto.setTypeSeq(typeSeq); // 자유게시판2
-
-		mv.addObject("typeSeq", boardDto.getTypeSeq()); // 2값 보냄
-		mv.setViewName("/board/write");
-		return mv;
-	}
-
 	
 	/*
 	  	3. 자유 게시판 업로드
@@ -135,66 +153,8 @@ public class BoardController {
 		// org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest@66de9ccc
 
 		map.put("msg", "게시판이 성공적으로 등록되었습니다");
+		map.put("result",result);
 		
 		return map;
 	}
-
-	@RequestMapping("/board/read.do")
-	public ModelAndView read(@RequestParam HashMap<String, Object> params) {
-		if(!params.containsKey("typeSeq")) {
-			params.put("typeSeq", this.typeSeq);
-		}
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("/board/read");
-		return mv;
-	}	
-
-
-	//수정  페이지로 	
-	@RequestMapping("/board/goToUpdate.do")
-	public ModelAndView goToUpdate(@RequestParam HashMap<String, Object> params, HttpSession session) {
-		ModelAndView mv = new ModelAndView();
-
-		if(!params.containsKey("typeSeq")) {
-			params.put("typeSeq", this.typeSeq);
-		}
-		
-		return mv;
-
-	}
-
-	@RequestMapping("/board/update.do")
-	@ResponseBody // !!!!!!!!!!!! 비동기 응답 
-	public HashMap<String, Object> update(@RequestParam HashMap<String,Object> params, 
-			MultipartHttpServletRequest mReq) {
-
-		if(!params.containsKey("typeSeq")) {
-			params.put("typeSeq", this.typeSeq);
-		}
-
-		return null;
-	}
-
-	@RequestMapping("/board/delete.do")
-	@ResponseBody
-	public HashMap<String, Object> delete(@RequestParam HashMap<String, Object> params, HttpSession session) {
-
-		if(!params.containsKey("typeSeq")) {
-			params.put("typeSeq", this.typeSeq);
-		}
-		return null; // 비동기: map return 
-	}
-
-	@RequestMapping("/board/deleteAttFile.do")
-	@ResponseBody
-	public HashMap<String, Object> deleteAttFile(@RequestParam HashMap<String, Object> params) {
-
-		if(!params.containsKey("typeSeq")) {
-			params.put("typeSeq", this.typeSeq);
-		}
-		return null;
-	} 
-
-	
-
 }

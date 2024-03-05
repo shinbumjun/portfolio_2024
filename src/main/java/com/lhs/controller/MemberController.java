@@ -37,24 +37,6 @@ public class MemberController {
 	@Value("#{config['site.context.path']}")
 	String ctx;
 
-	// 로그인 페이지
-	@RequestMapping("/member/goLoginPage.do")
-	public String goLogin() {
-		return "member/login";
-	}
-
-	// 회원가입 페이지
-	@RequestMapping("/member/goRegisterPage.do")
-	public String goRegisterPage() {
-		return "member/register";
-	}
-	
-	// 비밀번호 찾기 페이지
-	@RequestMapping("/member/goPassword.do")
-	public String goPassword() {
-		return "member/password";
-	}
-	
 	/*
 	  	비밀번호 변경 페이지
 	  	여기서 memberId와 email을 받아야 하나?
@@ -371,7 +353,6 @@ public class MemberController {
 	public String getSessionNumber(HttpSession session) {
 	    return (String) session.getAttribute("number");
 	}
-	
 	
 	/*
 	 	세션의 유효기간을 설정하는 메서드 

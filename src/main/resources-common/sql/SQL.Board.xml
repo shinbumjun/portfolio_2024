@@ -10,14 +10,31 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		public BoardDto list(BoardDto boardDto); 
 		
 		(브라우저에 출력될 데이터) 번호, 제목, 글쓴이, 조회수, 첨부파일, 작성일 (조건 type_seq=2)
+		
+		startRow 시작, pageSize 페이지 사이즈
 	-->
-	<select id="list" parameterType="BoardDto" resultType="BoardDto">
+	<select id="list" parameterType="map" resultType="BoardDto">
 	    SELECT board_seq, title, member_id, hits, has_file, create_dtm
 		FROM S_shinbumjun.board
 		WHERE type_seq = #{typeSeq}
 		ORDER BY board_seq desc
-		LIMIT 15;
+    	LIMIT #{startRow}, #{pageSize};
 	</select>
+		
+	<!-- 
+		총 페이지 수를 가져오기 위해서 작성 (수정)
+		총 게시글 수를 가져와 보기
+		public int getTotalCount(PagingDto pagingDto);
+		
+		
+		count(*) : 5166
+		ROUND(count(*)/10) : 517
+	 -->	
+	 <select id="getTotalCount" parameterType="pagingDto" resultType="int">
+	 	select count(*)
+		from S_shinbumjun.board;
+	 </select>
+	 
 		
 	<select id="getTotalArticleCnt" parameterType="HashMap" resultType="int">
 	

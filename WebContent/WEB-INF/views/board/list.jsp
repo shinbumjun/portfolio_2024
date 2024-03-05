@@ -32,16 +32,16 @@
 				</thead>
 				<tbody>
 					
-			        <c:forEach var="list" items="${boardlist}" varStatus="board">
-			        <tr>
-			            <td class="text-center">${list.boardSeq} </td>
-			            <td>${list.title} </td>
-			            <td>${list.memberId} </td>
-			            <td>${list.hits} </td>
-			            <td>${list.hasFile} </td>
-			            <td>${list.createDtm} </td>
-			        </tr>
-			        </c:forEach>  
+                    <c:forEach var="list" items="${boardlist}" varStatus="board">
+                        <tr>
+                            <td class="text-center">${list.boardSeq}</td>
+                            <td>${list.title}</td>
+                            <td>${list.memberId}</td>
+                            <td>${list.hits}</td>
+                            <td>${list.hasFile}</td>
+                            <td>${list.createDtm}</td>
+                        </tr>
+                    </c:forEach>
 					
 				</tbody>
 			</table>
