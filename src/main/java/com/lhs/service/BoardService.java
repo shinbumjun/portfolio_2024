@@ -25,10 +25,9 @@ public interface BoardService {
 	// 3. 자유 게시판 업로드
 	public int write(BoardDto boardDto, List<MultipartFile> mFiles, HttpServletRequest request) throws IOException;
 
-	/**
-	 * 글 조회  
-	 */
-	public HashMap<String, Object> read(HashMap<String, Object> params);
+	// 자유게시판 글 조회
+	public BoardDto read(BoardDto boardDto);
+	
 	/**
 	 * 글 수정 update 
 	 * @param params

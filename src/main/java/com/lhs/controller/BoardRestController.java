@@ -48,17 +48,6 @@ public class BoardRestController {
 		return mv;
 	}
 	
-	// 읽기 페이지로
-	@RequestMapping("/board/read.do")
-	public ModelAndView read(BoardDto boardDto) {
-		ModelAndView mv = new ModelAndView();
-		
-		boardDto.setTypeSeq(typeSeq); // 자유게시판2
-		
-		mv.setViewName("/board/read");
-		return mv;
-	}	
-	
 	// 수정  페이지로 	
 	@RequestMapping("/board/goToUpdate.do")
 	public ModelAndView goToUpdate(BoardDto boardDto, HttpSession session) {

@@ -39,8 +39,8 @@ $(document).ready(function(){
 					<!-- post -->
 					<div class="clearfix mb-80">
 						<div class="border-bottom-1 border-top-1 p-12">
-							<span class="float-right fs-10 mt-10 text-muted">작성일시</span>
-							<center><strong>타이틀</strong></center>
+							<span class="float-right fs-10 mt-10 text-muted">${read.createDtm}</span>
+							<center><strong>${read.title}</strong></center>
 						</div>
 						<div class="block-review-content">
 							<div class="block-review-body">
@@ -49,11 +49,11 @@ $(document).ready(function(){
 										<img src="resources/images/_smarty/avatar2.jpg" width="100" alt="avatar">
 										<!--  <i class="fa fa-user" style="font-size:30px"></i>-->
 									</div>
-									<small class="block">닉네임</small>		
+									<small class="block">${read.memberNick}</small>		
 									<hr />
 								</div>
 								<p>
-									본문 내용
+									${read.content}
 								</p>
 							<!-- 컬렉션 형태에서는 (list) items  -->
 							
@@ -98,17 +98,18 @@ $(document).ready(function(){
 							</c:if>
 								
 					   		<c:choose>
-				        		<c:when test="${empty currentPage}">
+				        		<c:when test="${empty ph.page}">
 					        		<a href="javascript:movePage('/board/list.do')">
 							        	<button type="button" class="btn btn-primary">목록</button>
 							   		</a>
 				        		</c:when>
 				        		<c:otherwise>
-				        			<a href="javascript:movePage('/board/list.do?page=currentPage')">
+				        			<a href="javascript:movePage('/board/list.do?page=${ph.page}&pageSize=${ph.pageSize}')">
 								        <button type="button" class="btn btn-primary">목록</button>
 							   		</a>
 				        		</c:otherwise>
 					        </c:choose>  
+					        
 								</div>
 							</div>
 						</div>

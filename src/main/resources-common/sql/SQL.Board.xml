@@ -44,7 +44,18 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	    	(#{typeSeq}, #{memberId}, #{memberNick}, #{title}, #{content}, NULL, 0, DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'), DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
 	</insert>
 	
-	<select id="read" parameterType="HashMap" resultType = "HashMap">
+	<!-- 
+		자유게시판 글 조회
+		public BoardDto read(BoardDto boardDto);
+		boardSeq        board_seq
+		typeSeq         type_seq
+	
+	 -->
+	<select id="read" parameterType="BoardDto" resultType = "BoardDto">
+		SELECT board_seq, type_seq, member_id, member_nick, title, content, has_file, hits, create_dtm, update_dtm
+		FROM S_shinbumjun.board
+		where board_seq = #{boardSeq}
+		and type_seq = #{typeSeq};
 	</select>
 
 	<update id="updateHits" parameterType="HashMap" >

@@ -144,4 +144,48 @@ public class BoardController {
 		
 		return map;
 	}
+	
+	/*
+	 	제목을 눌렀을때 읽기 페이지로
+	 	boardSeq        board_seq
+	*/
+	@RequestMapping("/board/read.do")
+	public ModelAndView read(BoardDto boardDto, PageHandlerDto pageHandlerDto) {
+		ModelAndView mv = new ModelAndView();
+		
+		boardDto.setTypeSeq(typeSeq); // 자유게시판2
+		System.out.println("게시글 번호 : " + boardDto.getBoardSeq());
+		
+		// 자유게시판 글 조회
+		BoardDto read = bService.read(boardDto);
+		System.out.println("글 조회 : " + read);
+		// BoaedDto [boardSeq=10764, typeSeq=2, memberId=sinbumjun, memberNick=범그로, title=안녕하세요, 
+		// 			 content=파일 업로드는 하지 않겠습니다, hasFile=null, hits=0, createDtm=20240304164152, updateDtm=20240304164152]
+		
+		// /board/list에서 가져온 값 확인
+		System.out.println("boardDto : " + boardDto);
+		// BoaedDto [boardSeq=8140, typeSeq=2, memberId=null, memberNick=null, title=null, 
+		//           content=null, hasFile=null, hits=null, createDtm=null, updateDtm=null]
+		System.out.println("pageHandlerDto : " + pageHandlerDto);
+		// PageHandlerDto [totalCnt=0, pageSize=10, naviSize=10, totalPage=0, page=6, 
+		//                 beginPage=0, endPage=0, showPrev=false, showNext=false]
+		
+		// 목록 버튼을 누르면 해당 페이지를 보여주는 게시판 위치로
+		mv.addObject("ph", pageHandlerDto);
+		
+		mv.addObject("read", read);
+		mv.addObject("nextPage", "/board/read");
+		mv.addObject("msg", "자유게시판 게시글");
+		return mv;
+	}	
 }
+
+
+
+
+
+
+
+
+
+

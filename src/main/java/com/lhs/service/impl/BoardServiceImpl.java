@@ -123,12 +123,10 @@ public class BoardServiceImpl implements BoardService{
 		return 1; // 업로드를 하고 성공한 경우
 	}
 
-	
-
-	//글 조회 
+	// 자유게시판 글 조회
 	@Override
-	public HashMap<String, Object> read(HashMap<String, Object> params) {
-		return bDao.read(params);
+	public BoardDto read(BoardDto boardDto) {
+		return bDao.read(boardDto);
 	}
 
 	@Override

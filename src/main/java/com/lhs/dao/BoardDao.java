@@ -17,10 +17,8 @@ public interface BoardDao {
 	// 3. 자유 게시판 업로드
 	public int write(BoardDto boardDto);
 	
-	/**
-	 * 글 조회  
-	 */
-	public HashMap<String, Object> read(HashMap<String, Object> params);
+	// 자유게시판 글 조회
+	public BoardDto read(BoardDto boardDto);
 	
 	/**
 	 * 조회수 증가.

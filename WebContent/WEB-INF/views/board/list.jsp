@@ -35,7 +35,8 @@
                     <c:forEach var="list" items="${boardlist}" varStatus="board">
                         <tr>
                             <td class="text-center">${list.boardSeq}</td>
-                            <td>${list.title}</td>
+                            <!-- 게시글 제목을 클릭하면 해당 게시글로 이동하도록 링크 추가 -->
+           					<td><a href="javascript:movePage('/board/read.do?boardSeq=${list.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}')">${list.title}</a></td>
                             <td>${list.memberId}</td>
                             <td>${list.hits}</td>
                             <td>${list.hasFile}</td>
@@ -59,7 +60,7 @@
 					
 					<!-- 내비게이션 -->
 					<c:forEach var="i" begin="${ph.beginPage}" end="${ph.endPage}"> <!-- 내비게이션의 첫번째와 마지막 페이지 -->
-					<li class="page-item"><a class="page-link" href="javascript:movePage('/board/list.do?page=${i}&pageSize=${ph.pageSize}')">${i}</a></li>
+						<li class="page-item <c:if test="${i eq ph.page}">active</c:if>"><a class="page-link" href="javascript:movePage('/board/list.do?page=${i}&pageSize=${ph.pageSize}')">${i}</a></li>
 					</c:forEach>
 					
 					<!-- 다음 페이지로 가는 링크 -->
