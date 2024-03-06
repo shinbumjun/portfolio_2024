@@ -15,8 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.lhs.dao.AttFileDao;
 import com.lhs.dao.BoardDao;
 import com.lhs.dto.BoardDto;
-import com.lhs.dto.PagingDto;
-import com.lhs.dto.TotalCountAndMaxPageDto;
 import com.lhs.service.BoardService;
 import com.lhs.util.FileUtil;
 
@@ -32,57 +30,24 @@ public class BoardServiceImpl implements BoardService{
 	
 	// 1. 모든 리스트 -> 페이징한 리스트
 	@Override
-	public List<BoardDto> list(BoardDto boardDto, PagingDto pagingDto) {
-		HashMap<String, Object> map = new HashMap<String, Object>(); // 필요한 값들 map에 담아서 리턴하려고
-		
-		System.out.println("페이징을 하기 위해서 만든 Dto : " + pagingDto); // PagingDto [pageSize=10, currentPage=1]
-		
-		//  해당 페이지에서 시작  = (현재 페이지-1) * 페이지 사이즈 +1;
-		int startRow = (pagingDto.getCurrentPage() - 1) * pagingDto.getPageSize() + 1; // 1
-		System.out.println("해당 페이지에서 시작 : " + startRow);
-		
-		// 해당 페이지에서 끝 = 시작 + 페이지 사이즈 - 1;
-        int endRow = startRow + pagingDto.getPageSize() - 1; // 10
-        System.out.println("해당 페이지에서 끝 : " + endRow);
+	public List<BoardDto> list(BoardDto boardDto, HashMap<String, Object> map) {
         
         map.put("typeSeq", boardDto.getTypeSeq()); // 2 자유게시판
-        map.put("startRow", startRow); // startRow 시작
-        map.put("endRow", endRow);
-        map.put("pageSize", pagingDto.getPageSize()); // pageSize 페이지 사이즈
+        System.out.println("페이징한 리스트를 뽑기 위해 map에 담은 값들 : " + map); // {typeSeq=2, offset=0, pageSize=10}
         
 		return bDao.list(map);
 	}
 	
-	
-	
-	// 총 게시글 수 totalCount, 총 페이지 수 maxPage를 가져오기 위해서 작성해야함
+	// 2. 총 게시물 수를 구하기 (자유게시판의 총 게시글만 얻어오기)
 	@Override
-	public TotalCountAndMaxPageDto getTotalCountAndMaxPage(PagingDto pagingDto) {
-		// HashMap<String, Object> map = new HashMap<String, Object>(); 
-		
-        int totalCount = bDao.getTotalCount(pagingDto); 
-        System.out.println("총 게시글 수 가져오기 : " + totalCount); // 총 게시글 수 가져오기 : 5166
-        
-        int maxPage = (int) Math.ceil((double) totalCount / pagingDto.getPageSize());
-        System.out.println("총 페이지 수 계산  : " + maxPage); // 총 페이지 수 계산 : 517
-        
-        TotalCountAndMaxPageDto resultDto = new TotalCountAndMaxPageDto();
-        
-        resultDto.setTotalCount(totalCount);
-        resultDto.setMaxPage(maxPage);
-        
-        // map.put("totalCount", totalCount); // 총 게시글
-        // map.put("maxPage", maxPage); // 총 페이지 
-        
-        return resultDto; // 반환값이 명확해지고, 코드의 가독성과 유지보수성이 향상
+	public int getCount(String typeSeq) {
+		return bDao.getCount(typeSeq);
 	}
 	
-	
-	
-	@Override
-	public int getTotalArticleCnt(HashMap<String, String> params) {
-		return bDao.getTotalArticleCnt(params);
-	}
+//	@Override
+//	public int getTotalArticleCnt(HashMap<String, String> params) {
+//		return bDao.getTotalArticleCnt(params);
+//	}
 
 	// 3. 자유 게시판 업로드
 	@Override

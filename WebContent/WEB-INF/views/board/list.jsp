@@ -30,8 +30,8 @@
 						<th align="center">작성일</th>
 					</tr>
 				</thead>
+				
 				<tbody>
-					
                     <c:forEach var="list" items="${boardlist}" varStatus="board">
                         <tr>
                             <td class="text-center">${list.boardSeq}</td>
@@ -42,29 +42,37 @@
                             <td>${list.createDtm}</td>
                         </tr>
                     </c:forEach>
-					
 				</tbody>
+				
 			</table>
 		</div>
+		
+		<!-- 페이징 -->
 		<div class="row text-center">
 		    <div class="col-md-12">
 			    <ul class="pagination pagination-simple pagination-sm">
-			    	<!-- 페이징 -->
-				    <li class="page-item">
-			        	<a class="page-link" href="javascript:movePage('/board/list.do?page=1')">&laquo;</a>
-			        </li>
-			        <li class="page-item"><a class="page-link">1</a></li>
-			        <li class="page-item active"><a class="page-link" href="javascript:movePage('/board/list.do?page=2')">2</a></li>
-			        <li class="page-item"><a class="page-link" href="javascript:movePage('/board/list.do?page=3')">3</a></li>
-			        <li class="page-item"><a class="page-link" href="javascript:movePage('/board/list.do?page=4')">4</a></li>
-			        <li class="page-item"><a class="page-link" href="javascript:movePage('/board/list.do?page=5')">5</a></li>
-			        <li class="page-item"><a class="page-link" href="javascript:movePage('/board/list.do?page=6')">6</a></li>
-			        <li class="page-item">
-			        	<a class="page-link" href="javascript:movePage('/board/list.do?page=99')">&raquo;</a></li>
-			        </li>
+			    
+			    	<!-- 이전 페이지로 가는 링크 -->
+					<c:if test="${ph.showPrev}"> 
+						<li class="page-item"><a class="page-link" href="javascript:movePage('/board/list.do?page=${ph.beginPage-1}&pageSize=${ph.pageSize}')">&laquo;</a></li>
+					</c:if> 
+					
+					<!-- 내비게이션 -->
+					<c:forEach var="i" begin="${ph.beginPage}" end="${ph.endPage}"> <!-- 내비게이션의 첫번째와 마지막 페이지 -->
+					<li class="page-item"><a class="page-link" href="javascript:movePage('/board/list.do?page=${i}&pageSize=${ph.pageSize}')">${i}</a></li>
+					</c:forEach>
+					
+					<!-- 다음 페이지로 가는 링크 -->
+			        <c:if test="${ph.showNext}">
+			        <!-- c:if test="${ph.showNext && ph.endPage < ph.totalPage}" -->
+					    <li class="page-item"><a class="page-link" href="javascript:movePage('/board/list.do?page=${ph.endPage+1}&pageSize=${ph.pageSize}')">&raquo;</a></li>
+					</c:if> 
+			        
 			    </ul>
 		    </div>
 		</div>
+		<!-- 페이징 -->
+		
 		<div class="row">
 		    <div class="col-md-12 text-right">			   
 		    <a href="javascript:movePage('/board/goToWrite.do')">

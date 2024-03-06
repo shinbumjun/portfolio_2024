@@ -5,24 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.lhs.dto.BoardDto;
-import com.lhs.dto.PagingDto;
 
 public interface BoardDao {
 	
 	// 1. 모든 리스트  + Java 코드에서는 결과를 단일 객체가 아닌 리스트로 받아야 함
 	public List<BoardDto> list(HashMap<String, Object> map);
 	
-	// 총 게시글 수를 가져오기 위해서 작성
-	public int getTotalCount(PagingDto pagingDto);
-		
-	
-	/**
-	 * 총 글 수 
-	 * @param params
-	 * @return
-	 */
-	
-	public int getTotalArticleCnt(HashMap<String, String> params);
+	// 2. 총 게시물 수를 구하기 (자유게시판의 총 게시글만 얻어오기)
+	public int getCount(String typeSeq);
 	
 	// 3. 자유 게시판 업로드
 	public int write(BoardDto boardDto);
@@ -60,6 +50,4 @@ public interface BoardDao {
 	 */
 	public int delete(HashMap<String, Object> params);
 
-	
-	
 }

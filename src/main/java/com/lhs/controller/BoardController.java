@@ -16,8 +16,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.lhs.dto.BoardDto;
-import com.lhs.dto.PagingDto;
-import com.lhs.dto.TotalCountAndMaxPageDto;
+import com.lhs.dto.PageHandlerDto;
 import com.lhs.service.AttFileService;
 import com.lhs.service.BoardService;
 import com.lhs.util.FileUtil;
@@ -34,58 +33,46 @@ public class BoardController {
 
 	private String typeSeq = "2";
 
-	// 자유 게시판 (페이징 : 페이지 사이즈와 현재 페이지는 쿼리 문자열로 가져와야 한다)
+	// 1. 자유 게시판 - 페이징 : *****페이지 사이즈(pageSize)와 현재 페이지(page)는 쿼리 문자열로 가져와야 한다
 	@RequestMapping("/board/list.do")
-	public ModelAndView goLogin(BoardDto boardDto, PagingDto pagingDto, @RequestParam(defaultValue = "1") int currentPage){
+	public ModelAndView goLogin(BoardDto boardDto, PageHandlerDto pageHandlerDto){
 		ModelAndView mv = new ModelAndView();
+		HashMap<String, Object> map = new HashMap<String, Object>();
 		
-//		// 페이징 구현하기
-//		System.out.println("페이징을 하기 위해서 만든 Dto : " + pagingDto); // PagingDto [pageSize=10, currentPage=null]
-//		
-//		// 페이징을 하기 위해서는 페이지 사이즈(pageSize=10), 현재 페이지(currentPage)를 요청 파라미터로 받아와야 한다
-//		pagingDto.setCurrentPage(currentPage);
-//		System.out.println("현재 페이지 : " + pagingDto.getCurrentPage()); // 처음 값이 안들어오면 1
-//		
-//		// 총 페이지 수를 가져오기 위해서 작성 (수정)
-//		// 총 게시글 수도 필요할 것 같다
-//		int totalCount = bService.MaxPage(pagingDto);
-//		System.out.println("총 게시글 수 : " + totalCount); // 총 게시글 수 : 5166
-//		int maxPage = (int) Math.ceil((double) totalCount / pagingDto.getPageSize()); // 총 페이지 수 계산
-//	    System.out.println("총 페이지 : " + maxPage); // 총 페이지 : 517
-//	    
-//	    mv.addObject("currentPage", pagingDto.getCurrentPage()); // 현재 페이지		
-//	    mv.addObject("MaxPage", maxPage); // 총 페이지		
+		// 2. 현재 페이지가 파라미터로 들어오지 않을 경우 기본값으로 1 설정
+	    int page = pageHandlerDto.getPage() <= 0 ? 1 : pageHandlerDto.getPage();
 	    
-		// 총 페이지 수와 총 게시글 수를 가져오기
-		TotalCountAndMaxPageDto totalCount = bService.getTotalCountAndMaxPage(pagingDto);
-		System.out.println("총 게시글c : " + totalCount.getTotalCount());  // 총 게시글c : 5166
-		System.out.println("총 페이지c : " + totalCount.getMaxPage()); // 총 페이지c : 517
+		// 3. offset : 맨 처음부터 얼만큼 떨어져 있느냐, 수식 : (page-1)*10
+		int offset = (page-1)*10;
+		System.out.println("현재 페이지 : " + page); // 현재 페이지
+		System.out.println("맨 처음부터 얼만큼 떨어져 있느냐 : " + offset); // offset : 90, 첫 페이지 : 91
+		map.put("offset", offset);
+		map.put("pageSize", pageHandlerDto.getPageSize());
 		
-	    // 리스트 가져오기
-	    // 페이징 정보를 이용하여 특정 범위의 게시글 리스트 가져오기
-		pagingDto.setCurrentPage(currentPage);
+	    // 4. 페이징 정보를 이용하여 특정 범위의 게시글 리스트 가져오기
 	    boardDto.setTypeSeq(typeSeq); // 자유게시판2
 	    
-		List<BoardDto> boardlist = bService.list(boardDto, pagingDto); // 자유 게시판 2, [pageSize=10, currentPage=1]
-		System.out.println("boardlist : " + boardlist); // boardlist : [BoaedDto [boardSeq=10763,... 10개 가져오기
+		List<BoardDto> boardlist = bService.list(boardDto, map); // 자유 게시판 2, [pageSize=10, currentPage=1]
+		System.out.println("boardlist : " + boardlist); // 페이징한 페이지 리스트 가져오기
 		
+		// 5. 자유게시판의 총 게시물 수(totalCnt) 알아야 자유게시판 총 페이지 수(totalPage)를 알수 있다
+		int totalCnt = bService.getCount(typeSeq); 
+		System.out.println("총 게시물 수 : " + totalCnt); // 2595
+		pageHandlerDto.setTotalCnt(totalCnt);
+		
+		// 5/5. totalPage값을 보내줘야하는데 안 담겨서 생성자 이용 (총 게시물 갯수, 현재 페이지, 한 페이지의 크기)
+		PageHandlerDto pageHandler = new PageHandlerDto(totalCnt, page);
+		
+		// 6. jsp로 보내주는것
+		mv.addObject("pageHandler", pageHandler); // 총 게시물 갯수(totalCnt), 전체 페이지의 갯수(totalPage)등 페이징에 필요한 값들을  jsp로 넘겨 주어야 한다
+		// PageHandlerDto [totalCnt=2595, pageSize=10, naviSize=10, totalPage=260, 
+		//                 page=1, beginPage=1, endPage=10, showPrev=false, showNext=true]
+		System.out.println("pageHandler : " + pageHandler);
+		
+		mv.addObject("ph", pageHandler);
 		mv.addObject("boardlist", boardlist); // 리스트 출력
 		mv.addObject("msg", "자유게시판");
 		mv.addObject("nextPage", "/board/list");
-		
-		// 페이징 정보 전달
-	    mv.addObject("currentPage", currentPage); // currentPage=1 : 현재 페이지
-	    mv.addObject("maxPage", totalCount.getMaxPage()); // maxPage=517 : 총 페이지 수
-	    
-	    // 컨트롤러에서 PagingDto를 사용하여 startPage와 endPage 값을 계산하고 모델에 추가
-	    PagingDto paging = new PagingDto();
-	    paging.setCurrentPage(currentPage);
-	    int startPage = paging.calculateStartPage();
-	    int endPage = paging.calculateEndPage(totalCount.getMaxPage());
-
-	    // 모델에 startPage와 endPage 추가
-	    mv.addObject("startPage", startPage);
-	    mv.addObject("endPage", endPage);
 	    
 		System.out.println("jsp에 보내는 내용들 : " + mv);
 		return mv;
