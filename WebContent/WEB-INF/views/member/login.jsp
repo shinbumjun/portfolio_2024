@@ -28,7 +28,7 @@
 				processData: false,
 				contentType: false,
 				success: function(data, textStatus, jqXHR) {
-					data = $.parseJSON(data);
+					data = $.parseJSON(data); // 받은 데이터를 JSON 형식으로 파싱
 					console.log(data);
 					if(data.msg != undefined && data.msg != ''){
 						var msgTag = $("<strong>").text(data.msg);

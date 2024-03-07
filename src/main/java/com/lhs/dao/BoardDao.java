@@ -20,6 +20,29 @@ public interface BoardDao {
 	// 자유게시판 글 조회
 	public BoardDto read(BoardDto boardDto);
 	
+	// ***has_file : 파일이 있냐 없냐에 따라서 Y/N -> BoardSeq, TypeSeq값을 가지고 hasFile 수정
+	public int updateHasFile(HashMap<String, Object> update);
+	
+	
+	
+	
+	
+	// 첨부파일 먼저 삭제
+	public void deleteAttachedFiles(BoardDto boardDto);
+	
+	// 게시글 삭제
+	public int delete(BoardDto boardDto);
+	
+	// 혹시라도 첨부파일이 있을 수 있기 때문에 확인
+	public boolean hasAttachedFiles(Integer boardSeq);
+	
+	// 게시판 삭제시  HasFile 값이 무엇인지 가져오기
+	public String getHasFile(BoardDto boardDto);
+	
+	
+	
+	
+	
 	/**
 	 * 조회수 증가.
 	 * @param params
@@ -33,19 +56,13 @@ public interface BoardDao {
 	 * @return
 	 */
 	public int update(HashMap<String, Object> params);
-	
-	/**
-	 * 모든 첨부파일 삭제시 has_file = 0 으로 수정 
-	 * @param params
-	 * @return
-	 */
-	public int updateHasFileToZero(HashMap<String, Object> params);
 
-	 
-	/** 글 삭제 delete 
-	 * @param params
-	 * @return
-	 */
-	public int delete(HashMap<String, Object> params);
+	
+
+	
+
+	
+	
+	
 
 }

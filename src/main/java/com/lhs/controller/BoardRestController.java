@@ -68,17 +68,7 @@ public class BoardRestController {
 		
 		return null;
 	}
-	
-	// 삭제하기
-	@RequestMapping("/board/delete.do")
-	@ResponseBody
-	public HashMap<String, Object> delete(BoardDto boardDto, HttpSession session) {
 
-		boardDto.setTypeSeq(typeSeq); // 자유게시판2
-		
-		return null; // 비동기: map return 
-	}
-	
 	// 파일 삭제하기
 	@RequestMapping("/board/deleteAttFile.do")
 	@ResponseBody

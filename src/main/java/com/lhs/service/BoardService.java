@@ -28,6 +28,9 @@ public interface BoardService {
 	// 자유게시판 글 조회
 	public BoardDto read(BoardDto boardDto);
 	
+	// 게시판 삭제하기 
+	public int delete(BoardDto boardDto);
+	
 	/**
 	 * 글 수정 update 
 	 * @param params
@@ -41,11 +44,5 @@ public interface BoardService {
 	 * @return
 	 */
 	public boolean deleteAttFile(HashMap<String, Object> params);
-	
-	/** 글 삭제 delete 
-	 * @param params
-	 * @return
-	 */
-	public int delete(HashMap<String, Object> params);
 
 }

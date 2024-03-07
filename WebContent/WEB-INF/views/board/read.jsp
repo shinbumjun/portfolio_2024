@@ -10,19 +10,40 @@
 <script type="text/javascript">
 $(document).ready(function(){	
 	
-	$('#btnUpdate').on('click', function(){
-		var frm = document.readForm;
-		var formData = new FormData(frm);
-	    // code here
-	});
-	
-	$('#btnDelete').on('click', function(){		
+	$('#btnDelete').on('click', function(){      
 		if(confirm("삭제하시겠습니까?")){
-			// code here
-		}
-	});
-	
-});//ready 
+	        // AJAX 호출을 통해 데이터를 삭제하고 결과를 처리하는 함수 호출
+	        customAjax('<c:url value="/board/delete.do"/>' + '?boardSeq=' + '${read.boardSeq}', "/board/list.do" + '?page=' + '${ph.page}' + '&pageSize=' + '${ph.pageSize}');
+	        
+	        // var deleteUrl = '<c:url value="/board/delete.do"/>';  // 삭제 URL
+	        // var listUrl = '<c:url value="/board/list.do"/>';  // 리스트 URL
+	        // customAjax(deleteUrl + '?boardSeq=' + '${read.boardSeq}', "/board/list.do" + '?page=' + '${ph.page}' + '&pageSize=' + '${ph.pageSize}');
+	    }
+	   });
+	   
+	   function customAjax(url, responseUrl) {
+	        var frm = document.readForm;
+	        var formData = new FormData(frm);
+	           $.ajax({
+	               url : url,
+	               data : formData,
+	               type : 'POST',
+	               dataType : "text",
+	               processData : false,
+	               contentType : false,
+	               success : function (result, textStatus, XMLHttpRequest) {
+	                   var data = $.parseJSON(result);
+	                   alert(data.msg);
+	                   var boardSeq = data.boardSeq;
+	                   movePage(responseUrl);
+	               },
+	               error : function (XMLHttpRequest, textStatus, errorThrown) {
+	                  alert("에러 발생\n관리자에게 문의바랍니다.");
+	                  console.log("에러\n" + XMLHttpRequest.responseText);
+	                 }
+	          });
+	   }
+});
 </script>
 
 </head>
@@ -33,8 +54,8 @@ $(document).ready(function(){
 				<!-- LEFT -->
 				<div class="col-md-12 order-md-1">
 					<form name="readForm" class="validate" method="post" enctype="multipart/form-data" data-success="Sent! Thank you!" data-toastr-position="top-right">
-						<input type="hidden" name="boardSeq" value ="PK1"/>
-						<input type="hidden" name="typeSeq" value ="PK2"/>
+						<input type="hidden" name="boardSeq" value ="${read.boardSeq}"/>
+						<input type="hidden" name="typeSeq" value ="${read.typeSeq}"/>
 					</form>
 					<!-- post -->
 					<div class="clearfix mb-80">
@@ -49,7 +70,7 @@ $(document).ready(function(){
 										<img src="resources/images/_smarty/avatar2.jpg" width="100" alt="avatar">
 										<!--  <i class="fa fa-user" style="font-size:30px"></i>-->
 									</div>
-									<small class="block">${read.memberNick}</small>		
+									<small class="block">${read.memberNick} ${read.memberId}</small>		
 									<hr />
 								</div>
 								<p>
@@ -88,13 +109,15 @@ $(document).ready(function(){
 								</div>
 							<div class="row">
 								<div class="col-md-12 text-right">
-							<c:if test="${ true }">				
+								
+							<!-- c:if test="${memberId} == ${read.memberId}" -->	
+							<c:if test="${memberId eq read.memberId}">			
 									<a href="javascript:movePage('/board/goToUpdate.do?boardSeq=PK1')">
 							       		 <button type="button" class="btn btn-primary"><i class="fa fa-pencil"></i> 수정</button>
 							   		</a>	
-									<button type="button" class="btn btn-primary"  id="btnDelete">
-											삭제
-									</button>
+							   		<a href="javascript:movePage('/board/delete.do?page=${ph.page}&pageSize=${ph.pageSize}')">
+										<button type="button" class="btn btn-primary"  id="btnDelete">삭제</button>
+									</a>
 							</c:if>
 								
 					   		<c:choose>
@@ -104,7 +127,7 @@ $(document).ready(function(){
 							   		</a>
 				        		</c:when>
 				        		<c:otherwise>
-				        			<a href="javascript:movePage('/board/list.do?page=${ph.page}&pageSize=${ph.pageSize}')">
+				        			<a href="javascript:movePage('/board/list.do?page=${ph.page}&pageSize=${ph.pageSize}&boardSeq=${read.boardSeq}&typeSeq=${read.typeSeq}')">
 								        <button type="button" class="btn btn-primary">목록</button>
 							   		</a>
 				        		</c:otherwise>

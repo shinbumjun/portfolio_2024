@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -150,7 +151,7 @@ public class BoardController {
 	 	boardSeq        board_seq
 	*/
 	@RequestMapping("/board/read.do")
-	public ModelAndView read(BoardDto boardDto, PageHandlerDto pageHandlerDto) {
+	public ModelAndView read(BoardDto boardDto, PageHandlerDto pageHandlerDto, HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView();
 		
 		boardDto.setTypeSeq(typeSeq); // 자유게시판2
@@ -170,6 +171,16 @@ public class BoardController {
 		// PageHandlerDto [totalCnt=0, pageSize=10, naviSize=10, totalPage=0, page=6, 
 		//                 beginPage=0, endPage=0, showPrev=false, showNext=false]
 		
+		
+		// *게시판 읽기 로그인한 사용자 비교하기 위해서
+		HttpSession session = request.getSession();
+        session.getAttribute("memberId");
+		System.out.println("게시판 읽기 로그인한 사용자 : " + session.getAttribute("memberId")); // sinbumjun
+        mv.addObject("memberId", session.getAttribute("memberId"));
+		
+		// *게시판 읽기 글을 작성한 사용자 비교하기 위해서
+		// jsp 단에서 ${read.memberId}로 확인이 됨
+		
 		// 목록 버튼을 누르면 해당 페이지를 보여주는 게시판 위치로
 		mv.addObject("ph", pageHandlerDto);
 		
@@ -178,7 +189,46 @@ public class BoardController {
 		mv.addObject("msg", "자유게시판 게시글");
 		return mv;
 	}	
+	
+	/*
+	 	게시글 삭제
+	 	boardSeq           board_seq
+	 	typeSeq            type_seq
+	*/
+	@RequestMapping("/board/delete.do")
+	@ResponseBody
+	public HashMap<String, Object> delete(BoardDto boardDto, PageHandlerDto pageHandlerDto, HttpSession session) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		// ModelAndView mv = new ModelAndView(); 
+
+		boardDto.setTypeSeq(typeSeq); // 자유게시판2
+		System.out.println("boardDto : " + boardDto);
+		// BoaedDto [boardSeq=10764, typeSeq=2, memberId=null, memberNick=null, title=null, 
+		//           content=null, hasFile=null, hits=null, createDtm=null, updateDtm=null]
+		
+		System.out.println("pageHandlerDto : " + pageHandlerDto);
+		// PageHandlerDto [totalCnt=0, pageSize=10, naviSize=10, totalPage=0, page=1, 
+		//                 beginPage=0, endPage=0, showPrev=false, showNext=false]		
+		// 게시판 삭제하기 
+		int result = bService.delete(boardDto);
+		System.out.println("게시판 삭제 : " + result); // 1
+		
+		if(result == 1) {
+			//map.put("page", pageHandlerDto.getPage()); // 원래 페이지로
+			//map.put("pageSize", pageHandlerDto.getPageSize());
+			map.put("nextPage", "/board/list");
+			map.put("msg", "게시글 삭제에 성공하였습니다");
+		}else {
+			//map.put("ph", pageHandlerDto); // 원래 페이지로
+			map.put("nextPage", "/board/list");
+			map.put("msg", "게시글 삭제에 실패하였습니다");
+		}
+		return map;
+	}
 }
+
+
+
 
 
 

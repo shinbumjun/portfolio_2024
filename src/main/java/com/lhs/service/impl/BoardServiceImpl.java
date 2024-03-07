@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lhs.dao.AttFileDao;
@@ -53,6 +54,7 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public int write(BoardDto boardDto, List<MultipartFile> mFiles, HttpServletRequest request) throws IOException {	
 		HashMap<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, Object> update = new HashMap<String, Object>();
 		
 		// {memberNick=, is_ajax=true, memberIdx=, action=contact_send, title=신범준 제목, content=신범준 내용, memberId=sinbumjun, typeSeq=2, boardSeq=9}
 		int result = bDao.write(boardDto); 
@@ -62,15 +64,10 @@ public class BoardServiceImpl implements BoardService{
 		if(result == 0) {
 			 return -1;
 		}
-//		MultipartHttpServletRequest)
-//		application/pdf
-//		오라클정리.pdf
-//		attFiles
-//		2650256
-//		application/octet-stream
-//
-//		attFiles
-//		0
+		
+		boolean anyFileUploaded = false; // **두 파일 중 하나라도 업로드된 경우를 판별하기 위한 변수
+		
+		// MultipartHttpServletRequest), application/pdf, 오라클정리.pdf, attFiles, 2650256, application/octet-stream, attFiles, 0
 		for(MultipartFile mFile : mFiles) {
 			// fakename 만들기
 			// to-do : smart_123.pdf -> (UUID).pdf
@@ -108,6 +105,8 @@ public class BoardServiceImpl implements BoardService{
 					// 파일 업로드가 실패한 경우 예외 던지기
 					if(success == 0) {
 						throw new IOException("파일이 업로드 되지 않았습니다");
+					}else {
+						anyFileUploaded = true; // ***파일이 업로드된 경우 변수값을  true로 설정
 					}
 				}
 				
@@ -119,6 +118,17 @@ public class BoardServiceImpl implements BoardService{
 			}
 		}
 		
+		// ***has_file : 파일이 있냐 없냐에 따라서 Y/N -> BoardSeq, TypeSeq값을 가지고 hasFile 수정
+		String hasFile = anyFileUploaded ? "Y" : "N";
+		update.put("BoardSeq", boardDto.getBoardSeq());
+		update.put("TypeSeq", boardDto.getTypeSeq());
+		update.put("hasFile", hasFile);
+		int updateResult = bDao.updateHasFile(update);
+		
+		if (updateResult == 0) {
+	        throw new RuntimeException("has_file 칼럼 업데이트에 실패했습니다.");
+	    }
+		
 		System.out.println("boardDto : " + boardDto);
 		return 1; // 업로드를 하고 성공한 경우
 	}
@@ -129,6 +139,54 @@ public class BoardServiceImpl implements BoardService{
 		return bDao.read(boardDto);
 	}
 
+	/* 
+	 	게시판 삭제하기
+	 	boardSeq           board_seq
+	 	typeSeq            type_seq
+	 	
+	 	추가로 HasFile 값이 무엇인지 가져오기
+	 */
+	@Override
+	@Transactional // 트랜잭션 사용
+	public int delete(BoardDto boardDto) {
+	    try {
+	        // 게시글 삭제시 가지고 있는 값 출력
+	        System.out.println("게시글 삭제시 가지고 있는 값: " + boardDto); // boardSeq, typeSeq
+	        
+	        // 게시판 삭제시 HasFile 값 가져오기
+	        String hasFile = bDao.getHasFile(boardDto); 
+	        System.out.println("게시글에 첨부파일이 있는지 확인: " + hasFile); // 첨부파일 있으면 Y, 없으면 N
+	        
+	        // 첨부파일이 있는 경우
+	        if (hasFile != null && hasFile.equals("Y")) {  
+	            System.out.println("첨부파일이 있는 게시글 삭제");
+
+	            // 여기서 첨부파일 삭제 등의 추가 작업 수행
+	            // 파일 처리 코드 작성
+
+	            bDao.deleteAttachedFiles(boardDto); // 첨부파일 먼저 삭제
+	            bDao.delete(boardDto); // 게시글 삭제
+
+	            return 1; // 정상적으로 삭제되었음을 반환
+	        } else { // 첨부파일이 없는 경우
+	            System.out.println("첨부파일이 없는 게시글 삭제");
+	            
+	            // 게시글 번호(board_seq)에 혹시라도 첨부파일이 있을수도 있어서 확인하고 삭제 
+	            if (bDao.hasAttachedFiles(boardDto.getBoardSeq())) {
+	            	System.out.println("혹시했는데 첨부파일이 있었다");
+	                bDao.deleteAttachedFiles(boardDto); // 첨부파일 먼저 삭제
+	            }
+	            
+	            // 게시글 삭제
+	            return bDao.delete(boardDto); // 첨부파일이 없는 게시글 삭제
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        // 예외 처리 또는 로깅 등을 수행할 수 있습니다.
+	        return 0; // 삭제에 실패했음을 반환
+	    }
+	}
+	
 	@Override
 	public int update(HashMap<String, Object> params, List<MultipartFile> mFiles) {
 		if(params.get("hasFile").equals("Y")) { // 첨부파일 존재시 			
@@ -138,13 +196,7 @@ public class BoardServiceImpl implements BoardService{
 		return bDao.update(params);
 	}
 
-	@Override
-	public int delete(HashMap<String, Object> params) {
-		if(params.get("hasFile").equals("Y")) { // 첨부파일 있으면 		
-			 // 파일 처리
-		}
-		return bDao.delete(params);
-	}
+	
 
 	@Override
 	public boolean deleteAttFile(HashMap<String, Object> params) {

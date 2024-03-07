@@ -65,13 +65,62 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	
 	</update>
 	
-	<update id="updateHasFileToZero" parameterType="HashMap" >
-	 	 
+	<!-- 
+		***has_file : 파일이 있냐 없냐에 따라서 Y/N -> BoardSeq, TypeSeq값을 가지고 hasFile 수정
+		public int updateHasFile(HashMap<String, Object> update);
+	-->
+	<update id="updateHasFile" parameterType="HashMap">
+	 	 UPDATE S_shinbumjun.board
+		 SET has_file= #{hasFile}
+		 WHERE board_seq= #{BoardSeq} AND type_seq=#{TypeSeq};
 	 </update>
 	
-	<delete id="delete" parameterType="HashMap">
-		
+	
+	
+	<!-- 
+		  첨부파일 먼저 삭제
+		 public void deleteAttachedFiles(BoardDto boardDto);
+	-->
+	<delete id="deleteAttachedFiles" parameterType="boardDto">
+	    DELETE FROM S_shinbumjun.board_attach
+	    WHERE board_seq=#{boardSeq} AND type_seq=#{typeSeq};
 	</delete>
+	
+	<!--  
+	  	  게시글 삭제
+		 public int delete(BoardDto boardDto);
+		 boardSeq, typeSeq
+	-->
+	<delete id="delete" parameterType="boardDto">
+		DELETE FROM S_shinbumjun.board
+	   	WHERE board_seq=#{boardSeq} AND type_seq=#{typeSeq};
+	</delete>
+	
+	<!-- 
+	         혹시라도 첨부파일이 있을 수 있기 때문에 확인
+	    public boolean hasAttachedFiles(Integer boardSeq);
+	-->
+	<select id="hasAttachedFiles" parameterType="int" resultType="boolean">
+	    SELECT COUNT(*) > 0
+	    FROM S_shinbumjun.board_attach
+	    WHERE board_seq = #{boardSeq};
+	</select>
+
+	<!--  
+		    게시판 삭제시  HasFile 값이 무엇인지 가져오기
+		  public String getHasFile(BoardDto boardDto);
+	-->
+	<select id="getHasFile" parameterType="boardDto" resultType="String">
+		SELECT has_file
+		FROM S_shinbumjun.board
+		where board_seq = #{boardSeq}
+		and type_seq = #{typeSeq};
+	</select>
+	
+
+
+
+
 
 	<!-- 
 		 fakename 만든것 업로드
@@ -86,7 +135,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	    INSERT INTO S_shinbumjun.board_attach
 	    (type_seq, board_seq, file_name, fake_filename, file_size, file_type, save_loc, create_dtm)
 	    VALUES
-	    (2, 2, #{Filename}, #{fakename}, #{Size}, #{Type}, '', DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
+	    (#{typeSeq}, #{boardSeq}, #{Filename}, #{fakename}, #{Size}, #{Type}, '', DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
 	</insert>
 
 </mapper>
