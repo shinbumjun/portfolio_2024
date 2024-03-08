@@ -58,13 +58,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		and type_seq = #{typeSeq};
 	</select>
 
-	<update id="updateHits" parameterType="HashMap" >
-	</update>
-
-	<update id="update" parameterType="HashMap">
-	
-	</update>
-	
 	<!-- 
 		***has_file : 파일이 있냐 없냐에 따라서 Y/N -> BoardSeq, TypeSeq값을 가지고 hasFile 수정
 		public int updateHasFile(HashMap<String, Object> update);
@@ -74,9 +67,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		 SET has_file= #{hasFile}
 		 WHERE board_seq= #{BoardSeq} AND type_seq=#{TypeSeq};
 	 </update>
-	
-	
-	
+
 	<!-- 
 		  첨부파일 먼저 삭제
 		 public void deleteAttachedFiles(BoardDto boardDto);
@@ -116,11 +107,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		where board_seq = #{boardSeq}
 		and type_seq = #{typeSeq};
 	</select>
-	
-
-
-
-
 
 	<!-- 
 		 fakename 만든것 업로드
@@ -137,6 +123,28 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	    VALUES
 	    (#{typeSeq}, #{boardSeq}, #{Filename}, #{fakename}, #{Size}, #{Type}, '', DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
 	</insert>
+
+	
+	<!--  
+		게시글 수정
+		public int update(BoardDto boardDto);
+		
+		boardSeq        board_seq
+	 	typeSeq         type_seq
+	 	
+		title           title
+	 	content         content
+	 	***파일 추후 예정
+	-->
+	<update id="update" parameterType="boardDto">
+		UPDATE S_shinbumjun.board
+		SET title=#{title}, content=#{content}, has_file=#{hasFile}, update_dtm=DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+		WHERE board_seq=#{boardSeq} AND type_seq=#{typeSeq};
+	</update>
+	
+	
+	<update id="updateHits" parameterType="HashMap" >
+	</update>
 
 </mapper>
 

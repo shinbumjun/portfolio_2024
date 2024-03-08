@@ -149,6 +149,8 @@ public class BoardController {
 	/*
 	 	제목을 눌렀을때 읽기 페이지로
 	 	boardSeq        board_seq
+	 	page
+	 	pageSize
 	*/
 	@RequestMapping("/board/read.do")
 	public ModelAndView read(BoardDto boardDto, PageHandlerDto pageHandlerDto, HttpServletRequest request) {
@@ -225,6 +227,87 @@ public class BoardController {
 		}
 		return map;
 	}
+	
+	/*
+	  	수정  페이지로 이 값들을 담아서 보냄, jsp에서 el문법으로 사용
+	  	boardSeq                update.boardSeq
+	  	page                    ph.page
+	  	pageSize                ph.pageSize
+	 */
+	@RequestMapping("/board/goToUpdate.do")
+	public ModelAndView goToUpdate(BoardDto boardDto, PageHandlerDto pageHandlerDto, HttpServletRequest request) {
+		ModelAndView mv = new ModelAndView();
+
+		boardDto.setTypeSeq(typeSeq); // 자유게시판2
+		
+		System.out.println("수정 페이지에 있는 boardDto 값 : " + boardDto);
+		// BoaedDto [boardSeq=8186, typeSeq=2, memberId=null, memberNick=null, title=null, 
+		//           content=null, hasFile=null, hits=null, createDtm=null, updateDtm=null]
+		System.out.println("수정 페이지에 있는 pageHandlerDto 값 : " + pageHandlerDto);
+		// PageHandlerDto [totalCnt=0, pageSize=10, naviSize=10, totalPage=0, page=1, 
+		//                 beginPage=0, endPage=0, showPrev=false, showNext=false]
+		
+		// 자유게시판 수정 페이지에 해당해당하는 값들을 출력해주기 위해 기존에 사용한 read메서드 호출
+		BoardDto update = bService.read(boardDto);
+		System.out.println("update페이지에 뿌려주는 값: " + update);
+		// BoaedDto [boardSeq=8186, typeSeq=2, memberId=sinbumjun, memberNick=범그로, title=eum...
+		
+		// request.getSession();
+		//request.getSession().getAttribute("memberId"); // 아이디
+		//request.getSession().getAttribute("memberNick"); // 별명
+		HttpSession session = request.getSession();
+		session.getAttribute("memberId");
+		session.getAttribute("memberNick");
+		
+		System.out.println("현재 로그인한 사용자 정보 : " + request.getSession());
+		
+		mv.addObject("update", update); // BoaedDto
+		mv.addObject("ph", pageHandlerDto); // PageHandlerDto 
+		mv.setViewName("/board/update"); // 페이지
+		mv.addObject("msg", "수정 페이지");
+		
+		return mv;
+	}
+	
+	/*
+	 	게시글 수정
+	 	boardSeq
+	 	typeSeq
+	 	
+	 	title           title
+	 	content         content
+	 	attFiles
+	*/
+	@RequestMapping("/board/update.do")
+	@ResponseBody // !!!!!!!!!!!! 비동기 응답 
+	public HashMap<String, Object> update(BoardDto boardDto, PageHandlerDto pageHandlerDto, MultipartHttpServletRequest mReq) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		boardDto.setTypeSeq(typeSeq); // 자유게시판2
+		System.out.println("수정 한것은 update하기 위한 값 : " + boardDto);
+		// BoaedDto [boardSeq=8186, typeSeq=2, memberId=sinbumjun, memberNick=범그로, title=제목 수정1, 
+		//           content=제목 수정2, hasFile=, hits=null, createDtm=null, updateDtm=null]
+		
+		// 제목, 내용, 파일 수정하기
+		int update = bService.update(boardDto, mReq);
+		System.out.println("수정이 잘 되었는지 확인하기!!! : " + update);
+		
+		// 수정에 성공? 실패?
+		if(update == 1) {
+			map.put("result", update); // BoaedDto
+			map.put("ph", pageHandlerDto); // PageHandlerDto 
+			map.put("nextPage", "/board/list"); // 페이지
+			map.put("msg", "게시글 수정에 성공하였습니다");
+		}else {
+			map.put("update", update); // BoaedDto
+			map.put("ph", pageHandlerDto); // PageHandlerDto 
+			map.put("nextPage", "/board/list"); // 페이지
+			map.put("msg", "게시글 수정에 실패하였습니다");
+		}
+		return map;
+	}
+	
+	
 }
 
 

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.lhs.dao.AttFileDao;
 import com.lhs.dao.BoardDao;
@@ -187,13 +188,16 @@ public class BoardServiceImpl implements BoardService{
 	    }
 	}
 	
+	// 게시글 수정
 	@Override
-	public int update(HashMap<String, Object> params, List<MultipartFile> mFiles) {
-		if(params.get("hasFile").equals("Y")) { // 첨부파일 존재시 			
-			// 파일 처리
-		}	
+	public int update(BoardDto boardDto, MultipartHttpServletRequest mFiles) {
+		
+//		if(params.get("hasFile").equals("Y")) { // 첨부파일 존재시 			
+//			// 파일 처리
+//		}	
+		
 		// 글 수정 dao 
-		return bDao.update(params);
+		return bDao.update(boardDto);
 	}
 
 	

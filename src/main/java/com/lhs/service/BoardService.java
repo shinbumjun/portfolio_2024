@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.lhs.dto.BoardDto;
 
@@ -31,12 +32,8 @@ public interface BoardService {
 	// 게시판 삭제하기 
 	public int delete(BoardDto boardDto);
 	
-	/**
-	 * 글 수정 update 
-	 * @param params
-	 * @return
-	 */
-	public int update(HashMap<String, Object> params, List<MultipartFile> mFiles);
+	// 게시글 수정
+	public int update(BoardDto boardDto, MultipartHttpServletRequest mFiles);
 	
 	/**첨부파일 삭제(수정 페이지에서 삭제버튼 눌러 삭제하는 경우임) 
 	 * 

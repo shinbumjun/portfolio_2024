@@ -42,6 +42,10 @@ public interface BoardDao {
 	
 	
 	
+	// 게시글 수정
+	public int update(BoardDto boardDto);
+	
+	
 	
 	/**
 	 * 조회수 증가.
@@ -50,12 +54,7 @@ public interface BoardDao {
 	 */
 	public int updateHits(HashMap<String, Object> params);
 	
-	/**
-	 * 글 수정 update 
-	 * @param params
-	 * @return
-	 */
-	public int update(HashMap<String, Object> params);
+	
 
 	
 

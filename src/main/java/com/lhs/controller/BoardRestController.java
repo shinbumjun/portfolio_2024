@@ -48,26 +48,7 @@ public class BoardRestController {
 		return mv;
 	}
 	
-	// 수정  페이지로 	
-	@RequestMapping("/board/goToUpdate.do")
-	public ModelAndView goToUpdate(BoardDto boardDto, HttpSession session) {
-		ModelAndView mv = new ModelAndView();
 
-		boardDto.setTypeSeq(typeSeq); // 자유게시판2
-		
-		return mv;
-	}
-	
-	// 수정하기
-	@RequestMapping("/board/update.do")
-	@ResponseBody // !!!!!!!!!!!! 비동기 응답 
-	public HashMap<String, Object> update(BoardDto boardDto, 
-			MultipartHttpServletRequest mReq) {
-
-		boardDto.setTypeSeq(typeSeq); // 자유게시판2
-		
-		return null;
-	}
 
 	// 파일 삭제하기
 	@RequestMapping("/board/deleteAttFile.do")

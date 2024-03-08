@@ -18,8 +18,8 @@ $(document).ready(function(){
 	        // var deleteUrl = '<c:url value="/board/delete.do"/>';  // 삭제 URL
 	        // var listUrl = '<c:url value="/board/list.do"/>';  // 리스트 URL
 	        // customAjax(deleteUrl + '?boardSeq=' + '${read.boardSeq}', "/board/list.do" + '?page=' + '${ph.page}' + '&pageSize=' + '${ph.pageSize}');
-	    }
-	   });
+	    }	
+	});
 	   
 	   function customAjax(url, responseUrl) {
 	        var frm = document.readForm;
@@ -35,7 +35,7 @@ $(document).ready(function(){
 	                   var data = $.parseJSON(result);
 	                   alert(data.msg);
 	                   var boardSeq = data.boardSeq;
-	                   movePage(responseUrl);
+	                   movePage(responseUrl); // 성공하면 게시판으로
 	               },
 	               error : function (XMLHttpRequest, textStatus, errorThrown) {
 	                  alert("에러 발생\n관리자에게 문의바랍니다.");
@@ -43,6 +43,9 @@ $(document).ready(function(){
 	                 }
 	          });
 	   }
+	   
+	   
+	   
 });
 </script>
 
@@ -112,12 +115,12 @@ $(document).ready(function(){
 								
 							<!-- c:if test="${memberId} == ${read.memberId}" -->	
 							<c:if test="${memberId eq read.memberId}">			
-									<a href="javascript:movePage('/board/goToUpdate.do?boardSeq=PK1')">
+									<a href="javascript:movePage('/board/goToUpdate.do?boardSeq=${read.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}')">
 							       		 <button type="button" class="btn btn-primary"><i class="fa fa-pencil"></i> 수정</button>
 							   		</a>	
-							   		<a href="javascript:movePage('/board/delete.do?page=${ph.page}&pageSize=${ph.pageSize}')">
+							   		<!-- a href="javascript:movePage('/board/delete.do?page=${ph.page}&pageSize=${ph.pageSize}')"-->
 										<button type="button" class="btn btn-primary"  id="btnDelete">삭제</button>
-									</a>
+									<!-- /a-->
 							</c:if>
 								
 					   		<c:choose>
