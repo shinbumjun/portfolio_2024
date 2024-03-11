@@ -36,20 +36,6 @@ public class BoardRestController {
 		return mv;
 	}
 	
-	// 2. 글쓰기 페이지로 	
-	@RequestMapping("/board/goToWrite.do")
-	public ModelAndView goToWrite(BoardDto boardDto) {
-		ModelAndView mv = new ModelAndView();
-		
-		boardDto.setTypeSeq(typeSeq); // 자유게시판2
-
-		mv.addObject("typeSeq", boardDto.getTypeSeq()); // 2값 보냄
-		mv.setViewName("/board/write");
-		return mv;
-	}
-	
-
-
 	// 파일 삭제하기
 	@RequestMapping("/board/deleteAttFile.do")
 	@ResponseBody

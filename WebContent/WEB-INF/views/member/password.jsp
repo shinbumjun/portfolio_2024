@@ -105,13 +105,32 @@
 				success: function(data, textStatus, jqXHR) {
 					data = $.parseJSON(data);
 					console.log(data);
-					if(data.msg != undefined && data.msg != ''){
+					if(data.msg != undefined && data.msg != '' && data.msg !== "비밀번호 찾기 실패!"){
 						var msgTag = $("<strong>").text(data.msg);
 						$('#msgDiv').html(msgTag).show();
 						$("#loading-div-background").hide();	// overlay 숨기기
+						
+						// map.put("msg", "인증번호가 발송되었습니다");  일때만 ***카운터 시작!
+					    counter = 60; // 카운터 초기화
+					    $('#btnLogin').prop('disabled', true); // 인증번호 받기 버튼 비활성화
+					    interval = setInterval(function() { // interval 변수에 setInterval()을 할당하여 전역에서 clearInterval()을 사용할 수 있도록 합니다.
+					        updateCountdown();
+					    }, 300);
+					    
 					}
 					else {
-						window.location.href = ctx + data.nextPage;
+						movePage('/member/goPassword.do'); // 바로 movePage로 이동하기 때문에 뒤에 메시지는 확인이 안됨
+						
+						var msgTag = $('<strong>').text("잘못 입력하셨습니다");
+						$('#msgDiv').html(msgTag).show(); // 안찍히는 값
+						
+						// var msgTag = $("<strong>").text(data.msg);
+						// $('#msgDiv').html(msgTag).show();
+						// $("#loading-div-background").hide();	// overlay 숨기기
+						
+						// console.log("잘못 입력하셨습니다!")
+						// alart("잘못 입력하셨습니다!")
+						// window.location.href = ctx + data.nextPage;
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -121,16 +140,6 @@
 					console.log(errorThrown);
 				}
 			});
-			
-			// 예외2) 인증번호가 발송되었습니다
-			
-		    // ***카운터 시작
-		    counter = 60; // 카운터 초기화
-		    $('#btnLogin').prop('disabled', true); // 인증번호 받기 버튼 비활성화
-		    interval = setInterval(function() { // interval 변수에 setInterval()을 할당하여 전역에서 clearInterval()을 사용할 수 있도록 합니다.
-		        updateCountdown();
-		    }, 300);
-			
 		});
 	});
 </script>

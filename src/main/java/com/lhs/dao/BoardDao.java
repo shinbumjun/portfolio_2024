@@ -47,12 +47,8 @@ public interface BoardDao {
 	
 	
 	
-	/**
-	 * 조회수 증가.
-	 * @param params
-	 * @return
-	 */
-	public int updateHits(HashMap<String, Object> params);
+	// 해당 게시물 조회수 +1
+	public int updateHits(HashMap<String, Object> map);
 	
 	
 

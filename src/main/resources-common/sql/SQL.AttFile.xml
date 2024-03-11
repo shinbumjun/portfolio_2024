@@ -6,7 +6,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<mapper namespace="com.lhs.dao.AttFileDao"> 
 		
 	<!-- 
-		2. 파일 업로드
+		0. 파일 업로드
 		public int addAttFile(HashMap<String, Object> params);
 	 -->
 	<insert id ="addAttFile" parameterType="HashMap" >
@@ -16,25 +16,53 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	    (#{typeSeq}, #{boardSeq}, #{filename}, #{fakename}, #{size}, #{type}, #{saveLocation}, DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
 	</insert>
 	
- 	<select id="readAttFiles" parameterType="HashMap" resultType="HashMap">
- 	
+	<!--  
+	 	1. 첨부파일 읽기1 : type, board_seq 통한 해당 게시글의 모든 첨부파일 불러오기
+		public List<HashMap<String, Object>> readAttFiles(BoardDto read);
+		
+		boardSeq=10776, typeSeq=2
+	-->
+ 	<select id="readAttFiles" parameterType="BoardDto" resultType="AttFileDto">
+ 		SELECT file_idx, type_seq, board_seq, file_name, fake_filename, file_size, file_type, save_loc, create_dtm
+		FROM S_shinbumjun.board_attach
+		where board_seq = #{boardSeq}
+		and type_seq = #{typeSeq};
 	</select>
  	
- 	<select id="readAttFileByPk" parameterType="int" resultType="HashMap">
+ 	<!--  
+ 		2. 첨부파일  다운로드2 : 하기 위해서 실제 정보 알아내기
+		public AttFileDto readAttFileByPk(int fileIdx);
+	-->
+ 	<select id="readAttFileByPk" parameterType="Integer" resultType="HashMap">
+ 		SELECT file_idx, type_seq, board_seq, file_name, fake_filename, file_size, file_type, save_loc, create_dtm
+		FROM S_shinbumjun.board_attach
+		where file_idx = #{fileIdx};
  	</select>
  	
- 	<delete id ="deleteAttFile" parameterType="HashMap">
- 	</delete>
- 	
- 	<delete id ="deleteAttFileByBoard" parameterType="HashMap">
- 	</delete>
  	
  	<select id="readAllAttFiles" resultType="HashMap">
  	</select>
  	
+ 	
+ 	
+ 	
+ 	<delete id ="deleteAttFile" parameterType="HashMap">
+ 	</delete>
+ 	
+ 	
+ 	<delete id ="deleteAttFileByBoard" parameterType="HashMap">
+ 	</delete>
+ 	
+ 	
+ 	
+ 	
+ 	
  	<update id="updateLinkedInfo" parameterType="int" >
  	</update>
  	
+ 	
  	<update id="updateLinkedInfos" parameterType="List" >
  	</update>		
+ 	
+ 	
 </mapper>

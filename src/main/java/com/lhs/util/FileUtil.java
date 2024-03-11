@@ -77,8 +77,4 @@ public class FileUtil {
 		}
 		return false;// 존재하지않으면 false 반환 
 	}
-	
-
-	
-	
 }

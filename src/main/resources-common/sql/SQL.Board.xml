@@ -143,8 +143,19 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	</update>
 	
 	
-	<update id="updateHits" parameterType="HashMap" >
+	<!-- 
+		 해당 게시물 조회수 +1
+		 public int updateHits(HashMap<String, Object> map);
+		 boardSeq
+		 typeSeq
+		                     hits + 1
+	 -->
+	<update id="updateHits" parameterType="HashMap">
+		UPDATE S_shinbumjun.board
+		SET hits=hits+1
+		WHERE board_seq=#{boardSeq} AND type_seq=#{typeSeq};
 	</update>
+
 
 </mapper>
 

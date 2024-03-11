@@ -19,6 +19,13 @@
 	</properties>
 	
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.tomcat.maven/tomcat7-maven-plugin -->
+		<dependency>
+		    <groupId>org.apache.tomcat.maven</groupId>
+		    <artifactId>tomcat7-maven-plugin</artifactId>
+		    <version>2.2</version>
+		</dependency>
+	
 		<!-- 세션 키값 유효시간을 각각 설정하기 위해서 -->
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
@@ -297,6 +304,24 @@
 		<!-- /환경설정에 관한 태그 -->
 
 		<plugins>
+		
+			<!-- 배포 -->
+			<plugin>
+			    <groupId>org.apache.tomcat.maven</groupId>
+			    <artifactId>tomcat7-maven-plugin</artifactId>
+			    <version>2.2</version>
+			    <configuration>
+			        <url>http://:8080/manager/text</url>
+			        <server>TomcatServer</server>
+			        <path>/${project.build.finalName}</path>
+			        <username>admin</username>
+			        <password>15124373q!</password>
+							<charset>UTF-8</charset>
+							<uriEncoding>UTF-8</uriEncoding>
+			    </configuration>
+			</plugin> 
+			
+			
 			<!-- 리소스를 시스템 환경에 맞게 구분해주는 플러그인 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

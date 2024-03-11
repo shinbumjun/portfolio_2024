@@ -46,10 +46,6 @@ public class BoardServiceImpl implements BoardService{
 		return bDao.getCount(typeSeq);
 	}
 	
-//	@Override
-//	public int getTotalArticleCnt(HashMap<String, String> params) {
-//		return bDao.getTotalArticleCnt(params);
-//	}
 
 	// 3. 자유 게시판 업로드
 	@Override
@@ -57,11 +53,10 @@ public class BoardServiceImpl implements BoardService{
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		HashMap<String, Object> update = new HashMap<String, Object>();
 		
-		// {memberNick=, is_ajax=true, memberIdx=, action=contact_send, title=신범준 제목, content=신범준 내용, memberId=sinbumjun, typeSeq=2, boardSeq=9}
+		// {memberNick=, is_ajax=true, memberIdx=, action=contact_send, title=신범준 제목, 
+		//  content=신범준 내용, memberId=sinbumjun, typeSeq=2, boardSeq=9}
 		int result = bDao.write(boardDto); 
-		System.out.println("boardDto : " + boardDto.getTypeSeq()); // 12
 		System.out.println(result); // 1
-		
 		if(result == 0) {
 			 return -1;
 		}
@@ -89,7 +84,6 @@ public class BoardServiceImpl implements BoardService{
 				
 				map.put("type", mFile.getContentType());
 				map.put("filename", mFile.getOriginalFilename());
-				// map.put("Name", mFile.getName()); //
 				map.put("size", mFile.getSize());
 				map.put("fakename", fakename);
 				map.put("boardSeq", boardDto.getBoardSeq());
@@ -97,7 +91,7 @@ public class BoardServiceImpl implements BoardService{
 				map.put("saveLocation", saveLocation);
 				System.out.println("map : "+ map);
 				
-				// 파일 사이즈가 0이 아닐때만 inset함 
+				// 파일 사이즈가 0이 아닐때만 insert함 
 				if(mFile.getSize() != 0) {
 					// 첨부 파일 추가
 					int success = attFileDao.addAttFile(map);
@@ -137,6 +131,12 @@ public class BoardServiceImpl implements BoardService{
 	// 자유게시판 글 조회
 	@Override
 	public BoardDto read(BoardDto boardDto) {
+		
+		// 게시글 글 조회시 조회수 +1
+		System.out.println("조회수 : " + boardDto);
+		// BoaedDto [boardSeq=8186, typeSeq=2, memberId=null, memberNick=null, title=null, 
+		// content=null, hasFile=null, hits=null, createDtm=null, updateDtm=null]
+		
 		return bDao.read(boardDto);
 	}
 
@@ -200,13 +200,27 @@ public class BoardServiceImpl implements BoardService{
 		return bDao.update(boardDto);
 	}
 
-	
+	// 해당 게시물 조회수 +1
+	@Override
+	public void updateHits(BoardDto read) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		System.out.println("해당 게시물 조회수 올리기 : " + read);
+		// BoaedDto [boardSeq=8186, typeSeq=2, memberId=sinbumjun, memberNick=범그로, title=수정하기2, 
+		//           content=test2, hasFile=, hits=1, createDtm=null, updateDtm=20240308163520]	
+		map.put("boardSeq", read.getBoardSeq());
+		map.put("typeSeq", read.getTypeSeq());
+		
+		bDao.updateHits(map);
+	}
+		
 
 	@Override
 	public boolean deleteAttFile(HashMap<String, Object> params) {
 		boolean result = false;		
 		return result;
 	}
+
+	
 
 }
 

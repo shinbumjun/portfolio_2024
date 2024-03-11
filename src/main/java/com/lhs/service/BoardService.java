@@ -35,11 +35,17 @@ public interface BoardService {
 	// 게시글 수정
 	public int update(BoardDto boardDto, MultipartHttpServletRequest mFiles);
 	
+	// 해당 게시물 조회수 +1
+	public void updateHits(BoardDto read);
+		
+		
 	/**첨부파일 삭제(수정 페이지에서 삭제버튼 눌러 삭제하는 경우임) 
 	 * 
 	 * @param params
 	 * @return
 	 */
 	public boolean deleteAttFile(HashMap<String, Object> params);
+
+	
 
 }

@@ -79,36 +79,44 @@ $(document).ready(function(){
 								<p>
 									${read.content}
 								</p>
+								
+								
+								
 							<!-- 컬렉션 형태에서는 (list) items  -->
-							
-							<!-- 첨부파일 없으면  -->
+							<!-- 첨부파일 없으면 첨부파일 없음 메시지 출력 -->
 								<c:if test="${empty attFiles}"> 
 									<tr>
-										<th class="tright" >#첨부파일 다운로드 횟수</th>
+										<th class="tright" >첨부파일 없음</th>
 										<td colspan="6" class="tright"> </td> <!-- 걍빈칸  -->
 									</tr>
 								</c:if>
 										
-							<!-- 파일있으면  -->				
-								<c:forEach items="${attFiles}" var="file" varStatus ="f" >
-									</tr>									<tr>
-										<th class="tright">첨부파일 ${ f.count }</th>
-										<td colspan="6" class="tleft"> 
-										<c:choose>
-											<c:when test="${file.linked == 0}">
-												${file.file_name} (서버에 파일을 찾을 수 없습니다.)
-											</c:when>
-											
-											<c:otherwise>
-												<a href="<c:url value='/board/downloadFile.do?fileIdx=${file.file_idx}'/>"> 
-												${file.file_name}  ( ${file.file_size } bytes) 
-												</a> 
-												<br/>
-											</c:otherwise>
-										</c:choose>
+							<!-- 파일있으면  -->		
+							<!-- 첨부 파일 다운로드 링크를 생성 -->		
+								<c:forEach items="${attFiles}" var="file" varStatus="f">
+								
+								<tr>
+									<th class="tright">첨부파일 ${ f.count }</th>
+									<td colspan="6" class="tleft">
+								 	<c:choose>
+										 	<c:when test="${file.fileSize == 0}">
+												${file.fileName} (서버에 파일을 찾을 수 없습니다.)
+											</c:when> 
+
+											<c:otherwise> 
+												<a
+												href="<c:url value='/board/download.do?fileIdx=${file.fileIdx}'/>">
+													${file.fileName} ( ${file.fileSize } bytes) </a>
+												<br />
+											</c:otherwise> 
+								 		</c:choose> 
 										</td>
-									</tr>
-								</c:forEach>					
+								</tr>
+							</c:forEach>	
+									
+									
+									
+									
 								</div>
 							<div class="row">
 								<div class="col-md-12 text-right">

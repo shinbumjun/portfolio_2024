@@ -73,7 +73,7 @@
 			$('#content').val(content);
 			// /board/write.do에 대한 POST 요청이며, 요청이 성공하면 /board/list.do 페이지로 이동
 			customAjax("<c:url value='/board/write.do' />", "/board/list.do"); 
-	});
+		});
 });
 
 function customAjax(url, responseUrl) {
@@ -91,9 +91,9 @@ function customAjax(url, responseUrl) {
              alert(data.msg);
              var boardSeq = data.boardSeq;
              if(data.result == 1){
-                movePage(responseUrl);
+                movePage(responseUrl); // result 값이 1이면 /board/list.do 이동
              } else {
-               window.location.href="<c:url value='/index.do'/>";
+               window.location.href="<c:url value='/index.do'/>"; // 아니면 /index.do 이동
              }
          },
          error : function (XMLHttpRequest, textStatus, errorThrown) {

@@ -1,6 +1,8 @@
 package com.lhs.controller;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.lhs.dto.AttFileDto;
 import com.lhs.dto.BoardDto;
 import com.lhs.dto.PageHandlerDto;
 import com.lhs.service.AttFileService;
@@ -34,6 +37,18 @@ public class BoardController {
 
 	private String typeSeq = "2";
 
+	// 2. 글쓰기 페이지로 	
+	@RequestMapping("/board/goToWrite.do")
+	public ModelAndView goToWrite(BoardDto boardDto) {
+		ModelAndView mv = new ModelAndView();
+		
+		boardDto.setTypeSeq(typeSeq); // 자유게시판2
+
+		mv.addObject("typeSeq", boardDto.getTypeSeq()); // 2값 보냄
+		mv.setViewName("/board/write");
+		return mv;
+	}
+	
 	// 1. 자유 게시판 - 페이징 : *****페이지 사이즈(pageSize)와 현재 페이지(page)는 쿼리 문자열로 가져와야 한다
 	@RequestMapping("/board/list.do")
 	public ModelAndView goLogin(BoardDto boardDto, PageHandlerDto pageHandlerDto){
@@ -82,30 +97,32 @@ public class BoardController {
 	// 파일 다운로드
 	@RequestMapping("/board/download.do")
 	@ResponseBody
-	public byte[] downloadFile(@RequestParam int fileIdx, HttpServletResponse rep) {
+	public byte[] downloadFile(@RequestParam int fileIdx, HttpServletResponse response) throws UnsupportedEncodingException{
 		
-		//1.받아온 파람의 파일 pk로 파일 전체 정보 불러온다. -attFilesService필요! 
-		HashMap<String, Object> fileInfo = null;
+		//1.받아온 사람의 파일 pk로 파일 전체 정보 불러온다. -attFilesService필요! 
+		HashMap<String, Object> fileInfo = attFileService.readAttFileByPk(fileIdx);
+		System.out.println("받아온 사람의 파일 pk로 파일 전체 정보 : " + fileInfo);
+		// {board_seq=10778, save_loc=c:/dev/tmp/, file_name=master_preferences, file_type=application/octet-stream, 
+		// file_idx=38, create_dtm=20240311183340, file_size=135568, type_seq=2, fake_filename=fb7ad3649c0340d0a1b66d08535dbd72}
 		
 		//2. 받아온 정보를 토대로 물리적으로 저장된 실제 파일을 읽어온다.
-		byte[] fileByte = null;
+		// byte[] fileByte = null;
 		
-		if(fileInfo != null) { //지워진 경우 
-			//파일 읽기 메서드 호출 
-			fileByte = fileUtil.readFile(fileInfo);
+		if(fileInfo == null) {
+			// 파일 정보가 없는 경우, 적절한 HTTP 상태 코드 반환
+            return null;
 		}
 		
-		//돌려보내기 위해 응답(httpServletResponse rep)에 정보 입력. **** 응답사용시 @ResponseBody 필요 ! !
+		//돌려보내기 위해 응답(httpServletResponse response)에 정보 입력. **** 응답사용시 @ResponseBody 필요 ! !
 		//Response 정보전달: 파일 다운로드 할수있는 정보들을 브라우저에 알려주는 역할 
-		rep.setHeader("Content-Disposition", "attachment; filename=\""+fileInfo.get("file_name") + "\""); //파일명
-		rep.setContentType(String.valueOf(fileInfo.get("file_type"))); // content-type
-		rep.setContentLength(Integer.parseInt(String.valueOf(fileInfo.get("file_size")))); // 파일사이즈 
-		rep.setHeader("pragma", "no-cache");
-		rep.setHeader("Cache-Control", "no-cache");
 		
-		return fileByte;
-		// /board/download.do?fileIdx=1
+		// 파일 이름에 공백이나 특수 문자가 포함되어 있더라도 올바르게 작동하도록 보다 안전하게 처리
+		response.setContentType((String) fileInfo.get("file_type")); // 응답 컨텐츠 타입을 결정
+		response.setHeader("Content-Disposition", "attachment; filename=\"" +  URLEncoder.encode((String) fileInfo.get("file_name") , "UTF-8").replaceAll("\\+", "%20")+ "\"");
+		// URLEncoder.encode((String) fileInfo.get("file_name") , "UTF-8").replaceAll("\\+", "%20") : 파일 이름을 UTF-8로 인코딩
+		// response.setHeader("Content-Disposition", "attachment; filename=\"" + ... + "\""); : 다운로드할 파일의 이름을 설정
 		
+		return fileUtil.readFile(fileInfo); // FileUtil.java 사용
 	}
 	
 	/*
@@ -165,6 +182,20 @@ public class BoardController {
 		// BoaedDto [boardSeq=10764, typeSeq=2, memberId=sinbumjun, memberNick=범그로, title=안녕하세요, 
 		// 			 content=파일 업로드는 하지 않겠습니다, hasFile=null, hits=0, createDtm=20240304164152, updateDtm=20240304164152]
 		
+		
+		
+		// 1. 첨부파일 읽기1 : 해당게시글(typeSeq, board_seq)의 모든첨부파일(다중이니까)
+		List<AttFileDto> attFiles = attFileService.readAttFiles(read); // boardSeq=10776, typeSeq=2
+		System.out.println("해당 게시물의 모든 첨부파일 : " + attFiles); 
+		// [BoardAttachDto [fileIdx=34, typeSeq=2, boardSeq=10776, fileName=지원1.pdf, ...
+		
+		
+
+		
+		
+		// 조회수 +1
+		bService.updateHits(read);
+		
 		// /board/list에서 가져온 값 확인
 		System.out.println("boardDto : " + boardDto);
 		// BoaedDto [boardSeq=8140, typeSeq=2, memberId=null, memberNick=null, title=null, 
@@ -185,6 +216,9 @@ public class BoardController {
 		
 		// 목록 버튼을 누르면 해당 페이지를 보여주는 게시판 위치로
 		mv.addObject("ph", pageHandlerDto);
+		
+		// 1. 첨부파일 읽기1
+		mv.addObject("attFiles", attFiles);
 		
 		mv.addObject("read", read);
 		mv.addObject("nextPage", "/board/read");
@@ -306,7 +340,6 @@ public class BoardController {
 		}
 		return map;
 	}
-	
 	
 }
 
