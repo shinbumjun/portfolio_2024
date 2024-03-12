@@ -155,7 +155,7 @@ public class MemberController {
 	*/
 	@RequestMapping("/member/login.do")
 	@ResponseBody
-	public HashMap<String, Object> login(MemberDto memberDto, String logCheck, HttpServletRequest request,
+	public HashMap<String, Object> login(String redirect, MemberDto memberDto, String logCheck, HttpServletRequest request,
 			HttpServletResponse response){
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		
@@ -194,8 +194,18 @@ public class MemberController {
 			}
 			
 			try {			
-				map.put("nextPage", "/index.do"); // 로그인 성공시 홈페이지로 
-				System.out.println("로그인에 성공하셨습니다!!!");
+				// 자유게시판을 통해서 온거면... 자유게시판으로 이동
+				if (redirect != null && !redirect.isEmpty()) {
+					System.out.println("자유게시판 링크 : " + redirect); // /board/list.do 전에 가고 싶었던 페이지 URL
+					
+					map.put("nextPage", "/index.do"); // 자유 게시판 페이지로 이동을 못함...
+	                map.put("msg", "자유 게시판");
+					// map.put("nextPage", "movePage(redirect)");
+				    // map.put("msg", "자유 게시판");
+				}else {
+					map.put("nextPage", "/index.do"); // 로그인 성공시 홈페이지로 
+					System.out.println("로그인에 성공하셨습니다!!!");
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				// log.error("", e);
@@ -206,6 +216,7 @@ public class MemberController {
 		    map.put("nextPage", "/member/goLoginPage.do"); // 로그인 실패시 로그인 페이지로
 		    map.put("msg", "로그인 실패!");
 		}
+		
 		return map;
 	}
 

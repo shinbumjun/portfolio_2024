@@ -36,15 +36,7 @@ public class BoardRestController {
 		return mv;
 	}
 	
-	// 파일 삭제하기
-	@RequestMapping("/board/deleteAttFile.do")
-	@ResponseBody
-	public HashMap<String, Object> deleteAttFile(BoardDto boardDto) {
 
-		boardDto.setTypeSeq(typeSeq); // 자유게시판2
-		
-		return null;
-	} 
 }
 
 

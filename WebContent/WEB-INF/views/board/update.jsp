@@ -90,8 +90,11 @@ function customAjax(url, responseUrl) {
          success : function (result, textStatus, XMLHttpRequest) {
              var data = $.parseJSON(result);
              
-             console.log('data' + data);
+             console.log('result' + result);
+             console.log('textStatus' + textStatus);
              console.log('boardSeq' + data.boardSeq);
+             console.log('XMLHttpRequest 내용출력.  '+ XMLHttpRequest);
+             console.log('data.result 내용출력.  '+ data.result);
              
              alert(data.msg);
              var boardSeq = data.boardSeq;
@@ -110,11 +113,32 @@ function customAjax(url, responseUrl) {
 	});
 } // func customAjax End 
 
+<!--
+	mv.addObject("attFiles", attFiles); // 첨부파일 정보
+	mv.addObject("update", update); // BoaedDto
+	mv.addObject("ph", pageHandlerDto); // PageHandlerDto 
+	mv.setViewName("/board/update"); // 페이지
+	mv.addObject("msg", "수정 페이지");
+
+	-> 클릭 : deleteFile(${file.fileIdx} , ${file.boardSeq})
+	-> 이동 : /board/deleteAttFile.do
+	-> 성공 : javascript:movePage('/board/goToUpdate.do?boardSeq=${read.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}')
+-->
+	
 function deleteFile(fileIdx, boardSeq){
-	  if("${sessionScope.memberId}" != null) {
-       	 if(confirm("첨부파일을 삭제하시겠습니까?")){
-        	// code here
-       	}	       
+	console.log("값 확인 ");
+	// 세션의 memberId가 null이 아닌 경우에만 실행  
+	if("${sessionScope.memberId}" != null) {
+		// 사용자에게 삭제 여부를 확인하는 창을 띄움  
+		if(confirm("첨부파일을 삭제하시겠습니까?")){
+				// customAjax 함수 호출하여 삭제 요청 보냄
+	            // customAjax('/board/deleteAttFile.do?fileIdx=' + fileIdx + '&boardSeq=' + boardSeq, 
+	            //            '/board/goToUpdate.do?boardSeq=${read.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}');
+				
+				customAjax('<c:url value="/board/deleteAttFile.do?fileIdx=' + fileIdx + '&boardSeq=' + boardSeq + '" />', 
+	           			   '/board/read.do?boardSeq=${read.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}');
+
+	      }       
   	}
 }//func deletefile
 
@@ -168,54 +192,60 @@ function deleteFile(fileIdx, boardSeq){
 	
 									<div class="row">
 										<div class="col-md-12">
-											<label>
-												첨부파일
-											</label>
+											<label> 첨부파일 </label>
 
 
-									<!-- custom file upload -->								
-									<!-- 첨부 파일이 없는 경우에 대한 처리 -->				
-									<c:if test="${update.hasFile != 'Y' or empty update.hasFile}">
+
+
+										<!-- custom file upload -->
+										<c:if test="${empty attFiles}">
+											<!-- 첨부파일없으면  -->
 											<div class="fancy-file-upload fancy-file-primary">
-												<i class="fa fa-upload"></i>
-												<input type="file" class="form-control" name="attFiles" onchange="jQuery(this).next('input').val(this.value);" />
-												<input type="text" class="form-control" placeholder="no file selected" readonly="" />
-												<span class="button">Choose File</span>
+												<i class="fa fa-upload"></i> <input type="file"
+													class="form-control" name="attFiles"
+													onchange="jQuery(this).next('input').val(this.value);" />
+												<input type="text" class="form-control"
+													placeholder="no file selected" readonly="" /> <span
+													class="button">Choose File</span>
 											</div>
 											<div class="fancy-file-upload fancy-file-primary">
-												<i class="fa fa-upload"></i>
-												<input type="file" class="form-control" name="attFiles" onchange="jQuery(this).next('input').val(this.value);" />
-												<input type="text" class="form-control" placeholder="no file selected" readonly="" />
-												<span class="button">Choose File</span>
+												<i class="fa fa-upload"></i> <input type="file"
+													class="form-control" name="attFiles"
+													onchange="jQuery(this).next('input').val(this.value);" />
+												<input type="text" class="form-control"
+													placeholder="no file selected" readonly="" /> <span
+													class="button">Choose File</span>
 											</div>
-											<small class="text-muted block">Max file size: 10Mb (zip/pdf/jpg/png)</small>
-									</c:if>
-									
-									<!-- 첨부 파일이 있는 경우에 대한 처리 -->
-									<c:if test="${update.hasFile == 'Y'}">
-										<c:forEach items="${attFiles}" var="file" varStatus ="f" > 
-											<div class="row">	
+											<small class="text-muted block">Max file size: 10Mb
+												(zip/pdf/jpg/png)</small>
+										</c:if>
+										
+										
+										<!-- 파일있으면  -->
+										<c:forEach items="${attFiles}" var="file" varStatus="f">
+											<div class="row">
 												<div class="col-md-8 col-sm-8">
-													<div class="fancy-file-upload fancy-file-primary" >
-														<i class="fa fa-upload"></i>
-														
-														<input type="text" class="form-control" placeholder="${file.file_name} (${file.file_size} bytes)" readonly="" />
+													<div class="fancy-file-upload fancy-file-primary">
+														<i class="fa fa-upload"></i> <input type="text"
+															class="form-control"
+															placeholder="${file.fileName} (${file.fileSize} bytes)"
+															readonly="" />
 													</div>
-									
+
 												</div>
-												<div class="col-md-4 col-sm-4">	
-													<button type="button" class="btn btn-primary" onclick="deleteFile(${file.file_idx} , ${file.board_seq});">
-														첨부파일 삭제
-													</button>
-												</div>					
+												<div class="col-md-4 col-sm-4">
+													<button type="button" class="btn btn-primary"
+														onclick="deleteFile(${file.fileIdx} , ${file.boardSeq});">
+														첨부파일 삭제</button>
+												</div>
 											</div>
 										</c:forEach>
-									</c:if>
-									
-									
-										</div>
+										
+										
+										
 									</div>
-								</fieldset>
+								</div>
+							</fieldset>
 
 								<div class="row">
 									<div class="col-md-12 text-right">

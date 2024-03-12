@@ -126,7 +126,23 @@
 										</a>
 										<ul class="dropdown-menu">
 											<li><a href="javascript:movePage('/notice/list.do')">공지사항</a></li>
-											<li><a href="javascript:movePage('/board/list.do')">자유게시판</a></li>
+											<!-- li><a href="javascript:movePage('/board/list.do')">자유게시판</a></li -->
+											
+												<c:choose>
+												    <c:when test='${sessionScope.memberId != null}'>
+												        <!-- 사용자가 로그인한 경우 -->
+												        <li class="dropdown"><!-- SPRING BOARD -->
+												            <a class="dropdown-toggle" href="javascript:movePage('/board/list.do')">
+												                자유게시판
+												            </a>
+												        </li>
+												    </c:when>
+												    <c:otherwise>
+												        <!-- 사용자가 로그인하지 않은 경우 -->
+													    <li><a href="javascript:movePage('/member/goLoginPage.do?redirect=/board/list.do')">LOGIN 필요</a></li>
+												    </c:otherwise>
+												</c:choose>
+												
 										</ul>
 									</li>
 									<li class="dropdown"><!-- NOTES -->

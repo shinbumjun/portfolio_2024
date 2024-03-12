@@ -27,7 +27,7 @@ function movePage(url, params){
 		url : ctx + url,
 		data : params,
 		success : function(data, status, XMLHttpRequest){
-			console.log(data);
+			console.log("data : " + data);
 			$('div#contentDiv').html(data);
 		},
 		error : function(XMLHttpRequest, status, errorThrows){

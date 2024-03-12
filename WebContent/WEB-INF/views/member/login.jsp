@@ -69,6 +69,8 @@
 						</div>
 	
 						<form class="m-0" method="post" name="loginForm" autocomplete="off">
+							<!-- 이 부분에 hidden field 추가 -->
+   							<input type="hidden" id="redirect" name="redirect" value="${param.redirect}">
 							<div class="clearfix">
 								
 								<!-- memberId -->

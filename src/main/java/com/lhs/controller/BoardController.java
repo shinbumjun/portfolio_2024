@@ -49,12 +49,40 @@ public class BoardController {
 		return mv;
 	}
 	
-	// 1. 자유 게시판 - 페이징 : *****페이지 사이즈(pageSize)와 현재 페이지(page)는 쿼리 문자열로 가져와야 한다
+	/* 
+	 	1. 자유 게시판 - 페이징 : *****페이지 사이즈(pageSize)와 현재 페이지(page)는 쿼리 문자열로 가져와야 한다
+
+	*/
 	@RequestMapping("/board/list.do")
-	public ModelAndView goLogin(BoardDto boardDto, PageHandlerDto pageHandlerDto){
+	public ModelAndView goLogin(HttpServletRequest request, HttpServletResponse response, BoardDto boardDto, PageHandlerDto pageHandlerDto){
 		ModelAndView mv = new ModelAndView();
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		
+		
+		
+		// http://localhost:8088/lhs/board/list.do 
+		System.out.println("request.getRequestURL() : " + request.getRequestURL()); // 현재 요청의 URL을 나타내는 메소드
+
+		// 세션에서 memberId 가져오기
+	    HttpSession session = request.getSession();
+	    String memberId = (String) session.getAttribute("memberId");
+        System.out.println("자유게시판 이동시 로그인이 되어 있는지 확인 : " + session.getAttribute("memberId")); // 로그인이 안되어 있으면 null
+        
+        // 로그인이 되어 있지 않은 경우
+//        if(memberId == null) {
+//        	System.out.println("로그인이 되어 있지 않다");
+//        	// 자유게시판으로의 요청이 발생한 URL을 세션에 저장
+//        	mv.addObject("toURL", request.getRequestURL().toString());
+//        	mv.addObject("msg", "로그인 페이지");
+//    		mv.addObject("nextPage", "/member/goLoginPage.go"); // javascript:movePage('/member/goLoginPage.do')
+//    		
+//    		mv.addObject("msg", "자유게시판");
+//    		mv.addObject("nextPage", "/board/list");
+//    		return mv;
+//        }
+		
+		
+        
 		// 2. 현재 페이지가 파라미터로 들어오지 않을 경우 기본값으로 1 설정
 	    int page = pageHandlerDto.getPage() <= 0 ? 1 : pageHandlerDto.getPage();
 	    
@@ -295,6 +323,11 @@ public class BoardController {
 		
 		System.out.println("현재 로그인한 사용자 정보 : " + request.getSession());
 		
+		
+		// 1. 첨부파일 수정1 update (typeSeq, board_seq)의 모든첨부파일(다중이니까) -> attFiles
+		List<AttFileDto> attFiles = attFileService.readAttFiles(boardDto); // boardSeq=10776, typeSeq=2
+		mv.addObject("attFiles", attFiles); // 첨부파일 정보
+		
 		mv.addObject("update", update); // BoaedDto
 		mv.addObject("ph", pageHandlerDto); // PageHandlerDto 
 		mv.setViewName("/board/update"); // 페이지
@@ -340,6 +373,19 @@ public class BoardController {
 		}
 		return map;
 	}
+	
+	// 파일 삭제하기
+	@RequestMapping("/board/deleteAttFile.do")
+	@ResponseBody
+	public HashMap<String, Object> deleteAttFile(BoardDto boardDto, AttFileDto attFileDto) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		boardDto.setTypeSeq(typeSeq); // 자유게시판2
+		System.out.println("게시판 정보 : " + boardDto);
+		System.out.println("첨부파일 정보 : " + attFileDto);
+		
+		return map;
+	} 
 	
 }
 
