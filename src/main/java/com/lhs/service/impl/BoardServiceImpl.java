@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.lhs.dao.AttFileDao;
 import com.lhs.dao.BoardDao;
 import com.lhs.dto.BoardDto;
+import com.lhs.dto.SearchCondition;
 import com.lhs.service.BoardService;
 import com.lhs.util.FileUtil;
 
@@ -221,6 +222,21 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	
+	/*
+	 	검색기능 
+	 	keyword ="" (초기값), offset=0 (초기값), pageSize=10 전달
+	 */
+	@Override
+	public List<BoardDto> getSearchResultPage(SearchCondition sc){
+		System.out.println("sc정보2 : " + sc); // SearchCondition [page=1, pageSize=10, offset=0, keyword=, option=]
+		return bDao.searchSelectPage(sc);
+	};
+		
+	// 검색 후 페이징 
+	@Override
+	public int getSearchResultCnt(SearchCondition sc) {
+		return bDao.searchResyltCnt(sc);
+	};
 
 }
 

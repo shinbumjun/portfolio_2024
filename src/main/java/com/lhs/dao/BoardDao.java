@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.lhs.dto.BoardDto;
+import com.lhs.dto.SearchCondition;
 
 public interface BoardDao {
 	
@@ -54,10 +55,18 @@ public interface BoardDao {
 
 	
 
+	// 검색기능 : <select id="searchSelectPage" parameterType="SearchCondition" resultType="boardDto">
+	public List<BoardDto> searchSelectPage(SearchCondition sc);
 	
-
+	// 검색 후 페이징 : <select id="searchResyltCnt" parameterType="SearchCondition" resultType="int">
+	public int searchResyltCnt(SearchCondition sc);
 	
-	
-	
-
 }
+
+
+
+
+
+
+
+

@@ -157,6 +157,34 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	</update>
 
 
+	<!-- 
+		검색기능 
+		typeSeq = 2
+		keyword, offset, pageSize 값을 받아야 한다
+	-->
+	<select id="searchSelectPage" parameterType="SearchCondition" resultType="BoardDto">
+		SELECT board_seq, title, member_id, hits, has_file, create_dtm
+		FROM S_shinbumjun.board
+		where true
+		and type_seq = 2
+		and title like concat('%', #{keyword}, '%')
+		ORDER BY board_seq desc
+    	LIMIT #{offset}, #{pageSize};
+	</select>
+
+	<!-- 
+		검색 결과가 몇 개 인지 알아야 페이징을 할 수 있다
+		typeSeq, keyword, offset, pageSize
+	 -->
+	<select id="searchResyltCnt" parameterType="SearchCondition" resultType="int">
+		SELECT count(*)
+		FROM S_shinbumjun.board
+		where true
+		and type_seq = 2
+		and title like concat('%', #{keyword}, '%');
+	</select>
+
+
 </mapper>
 
 

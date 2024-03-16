@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.lhs.dto.BoardDto;
+import com.lhs.dto.SearchCondition;
 
 public interface BoardService {
 
@@ -45,6 +46,12 @@ public interface BoardService {
 	 * @return
 	 */
 	public boolean deleteAttFile(HashMap<String, Object> params);
+
+	// *****검색기능
+	List<BoardDto> getSearchResultPage(SearchCondition sc);
+
+	// *****검색 후 페이징 
+	int getSearchResultCnt(SearchCondition sc);
 
 	
 

@@ -47,6 +47,8 @@
 		}
 					
 		$('#btnUpdate').on('click', function(){ 
+			alert("수정");
+		
 			// 온클릭시 굳이 function doWrite() 펑션 선언,호출하지 말고 바로 종속시켜 기능 먹인다. 
 			// 여기서 바로 기능 구현. --> function의 선언을 줄인다.  
 			//따로 function 만들게 되면 해당 기능 수행하는 연결점 찾기 어렵다.. (펑션이름 일일이 검색해야함) 

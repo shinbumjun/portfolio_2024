@@ -139,7 +139,8 @@
 												    </c:when>
 												    <c:otherwise>
 												        <!-- 사용자가 로그인하지 않은 경우 -->
-													    <li><a href="javascript:movePage('/member/goLoginPage.do?redirect=/board/list.do')">LOGIN 필요</a></li>
+													    <!--  li><a href="javascript:movePage('/member/goLoginPage.do?redirect=/board/list.do')">LOGIN 필요</a></li-->
+													    <li><a href="javascript:movePage('/board/list.do')">자유게시판</a></li>
 												    </c:otherwise>
 												</c:choose>
 												
@@ -199,7 +200,7 @@
 									data-endspeed="1000"
 									data-endeasing="Power4.easeIn" style="z-index: 10; font-size:20px;">
 									<span class="fw-300"> 잘 오셨습니다.
-									<b style="font-size:20px">아무개</b>의 포트폴리오 사이트 입니다. :) </span>
+									<b style="font-size:20px">신범준</b>의 포트폴리오 사이트 입니다. :) </span>
 								</div>
 	
 								<div class="tp-caption customin ltl tp-resizeme large_bold_white"

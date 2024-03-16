@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.lhs.dto.AttFileDto;
 import com.lhs.dto.BoardDto;
 import com.lhs.dto.PageHandlerDto;
+import com.lhs.dto.SearchCondition;
 import com.lhs.service.AttFileService;
 import com.lhs.service.BoardService;
 import com.lhs.util.FileUtil;
@@ -53,67 +54,54 @@ public class BoardController {
 	 	1. 자유 게시판 - 페이징 : *****페이지 사이즈(pageSize)와 현재 페이지(page)는 쿼리 문자열로 가져와야 한다
 
 	*/
-	@RequestMapping("/board/list.do")
-	public ModelAndView goLogin(HttpServletRequest request, HttpServletResponse response, BoardDto boardDto, PageHandlerDto pageHandlerDto){
+	@RequestMapping("/board/list.do") // PageHandlerDto pageHandlerDto -> SearchCondition sc
+	public ModelAndView goLogin(HttpServletRequest request, HttpServletResponse response, BoardDto boardDto, SearchCondition sc){
 		ModelAndView mv = new ModelAndView();
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		
-		
-		
-		// http://localhost:8088/lhs/board/list.do 
-		System.out.println("request.getRequestURL() : " + request.getRequestURL()); // 현재 요청의 URL을 나타내는 메소드
-
-		// 세션에서 memberId 가져오기
-	    HttpSession session = request.getSession();
-	    String memberId = (String) session.getAttribute("memberId");
-        System.out.println("자유게시판 이동시 로그인이 되어 있는지 확인 : " + session.getAttribute("memberId")); // 로그인이 안되어 있으면 null
         
-        // 로그인이 되어 있지 않은 경우
-//        if(memberId == null) {
-//        	System.out.println("로그인이 되어 있지 않다");
-//        	// 자유게시판으로의 요청이 발생한 URL을 세션에 저장
-//        	mv.addObject("toURL", request.getRequestURL().toString());
-//        	mv.addObject("msg", "로그인 페이지");
-//    		mv.addObject("nextPage", "/member/goLoginPage.go"); // javascript:movePage('/member/goLoginPage.do')
-//    		
-//    		mv.addObject("msg", "자유게시판");
-//    		mv.addObject("nextPage", "/board/list");
-//    		return mv;
-//        }
+		System.out.println("boardDto 정보 : " + boardDto);
+		// BoaedDto [boardSeq=null, typeSeq=null, memberId=null, memberNick=null, title=null, content=null, hasFile=null, hits=null, createDtm=null, updateDtm=null]
+		System.out.println("sc 정보 : " + sc); 
+		// SearchCondition [page=1, pageSize=10, offset=0, keyword=, option=]
+		// 제목+내용, 신범준 입력시 -> SearchCondition [page=1, pageSize=10, offset=0, keyword=신범준, option=A]
 		
 		
-        
+		// 내부에서 처리
 		// 2. 현재 페이지가 파라미터로 들어오지 않을 경우 기본값으로 1 설정
-	    int page = pageHandlerDto.getPage() <= 0 ? 1 : pageHandlerDto.getPage();
+	    int page = sc.getPage() <= 0 ? 1 : sc.getPage();
+	    System.out.println("page정보 : " + page); 
 	    
 		// 3. offset : 맨 처음부터 얼만큼 떨어져 있느냐, 수식 : (page-1)*10
 		int offset = (page-1)*10;
 		System.out.println("현재 페이지 : " + page); // 현재 페이지
 		System.out.println("맨 처음부터 얼만큼 떨어져 있느냐 : " + offset); // offset : 90, 첫 페이지 : 91
-		map.put("offset", offset);
-		map.put("pageSize", pageHandlerDto.getPageSize());
+		// sc.setOffset(offset); // 페이지 네비 클릭시 이동 시킬려면 넣어야함
+		
 		
 	    // 4. 페이징 정보를 이용하여 특정 범위의 게시글 리스트 가져오기
 	    boardDto.setTypeSeq(typeSeq); // 자유게시판2
 	    
-		List<BoardDto> boardlist = bService.list(boardDto, map); // 자유 게시판 2, [pageSize=10, currentPage=1]
-		System.out.println("boardlist : " + boardlist); // 페이징한 페이지 리스트 가져오기
+		List<BoardDto> boardlist = bService.getSearchResultPage(sc); // 자유 게시판 2, ***offset
+		// list(boardDto, map) -> getSearchResultCnt(sc)
+		System.out.println("boardlist정보 : " + boardlist); // 페이징한 페이지 리스트 가져오기
 		
 		// 5. 자유게시판의 총 게시물 수(totalCnt) 알아야 자유게시판 총 페이지 수(totalPage)를 알수 있다
-		int totalCnt = bService.getCount(typeSeq); 
-		System.out.println("총 게시물 수 : " + totalCnt); // 2595
-		pageHandlerDto.setTotalCnt(totalCnt);
+		int totalCnt = bService.getSearchResultCnt(sc); 
+		System.out.println("총 게시물 수 : " + totalCnt); // 2547
 		
 		// 5/5. totalPage값을 보내줘야하는데 안 담겨서 생성자 이용 (총 게시물 갯수, 현재 페이지, 한 페이지의 크기)
-		PageHandlerDto pageHandler = new PageHandlerDto(totalCnt, page);
-		
+		PageHandlerDto pageHandler = new PageHandlerDto(totalCnt, sc);
+
 		// 6. jsp로 보내주는것
 		mv.addObject("pageHandler", pageHandler); // 총 게시물 갯수(totalCnt), 전체 페이지의 갯수(totalPage)등 페이징에 필요한 값들을  jsp로 넘겨 주어야 한다
 		// PageHandlerDto [totalCnt=2595, pageSize=10, naviSize=10, totalPage=260, 
 		//                 page=1, beginPage=1, endPage=10, showPrev=false, showNext=true]
-		System.out.println("pageHandler : " + pageHandler);
+		System.out.println("pageHandler정보 : " + pageHandler);
+		// PageHandlerDto [sc=SearchCondition [page=1, pageSize=10, offset=0, keyword=, option=], totalCnt=2547, 
+		//                 naviSize=10, totalPage=255, beginPage=1, endPage=10, showPrev=false, showNext=true]
 		
-		mv.addObject("ph", pageHandler);
+		mv.addObject("ph", pageHandler); // pageHandler -> pageHandler.getSc()
+		
 		mv.addObject("boardlist", boardlist); // 리스트 출력
 		mv.addObject("msg", "자유게시판");
 		mv.addObject("nextPage", "/board/list");
@@ -154,7 +142,7 @@ public class BoardController {
 	}
 	
 	/*
-	  	3. 자유 게시판 업로드
+	  	3.  업로드
 	  					       board_seq
 	  					       type_seq
 	 	memberId               member_id
@@ -198,7 +186,7 @@ public class BoardController {
 	 	pageSize
 	*/
 	@RequestMapping("/board/read.do")
-	public ModelAndView read(BoardDto boardDto, PageHandlerDto pageHandlerDto, HttpServletRequest request) {
+	public ModelAndView read(BoardDto boardDto, SearchCondition sc, HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView();
 		
 		boardDto.setTypeSeq(typeSeq); // 자유게시판2
@@ -228,7 +216,7 @@ public class BoardController {
 		System.out.println("boardDto : " + boardDto);
 		// BoaedDto [boardSeq=8140, typeSeq=2, memberId=null, memberNick=null, title=null, 
 		//           content=null, hasFile=null, hits=null, createDtm=null, updateDtm=null]
-		System.out.println("pageHandlerDto : " + pageHandlerDto);
+		System.out.println("pageHandlerDto : " + sc);
 		// PageHandlerDto [totalCnt=0, pageSize=10, naviSize=10, totalPage=0, page=6, 
 		//                 beginPage=0, endPage=0, showPrev=false, showNext=false]
 		
@@ -243,7 +231,7 @@ public class BoardController {
 		// jsp 단에서 ${read.memberId}로 확인이 됨
 		
 		// 목록 버튼을 누르면 해당 페이지를 보여주는 게시판 위치로
-		mv.addObject("ph", pageHandlerDto);
+		mv.addObject("ph", sc);
 		
 		// 1. 첨부파일 읽기1
 		mv.addObject("attFiles", attFiles);
@@ -261,7 +249,7 @@ public class BoardController {
 	*/
 	@RequestMapping("/board/delete.do")
 	@ResponseBody
-	public HashMap<String, Object> delete(BoardDto boardDto, PageHandlerDto pageHandlerDto, HttpSession session) {
+	public HashMap<String, Object> delete(BoardDto boardDto, SearchCondition sc, HttpSession session) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		// ModelAndView mv = new ModelAndView(); 
 
@@ -270,7 +258,7 @@ public class BoardController {
 		// BoaedDto [boardSeq=10764, typeSeq=2, memberId=null, memberNick=null, title=null, 
 		//           content=null, hasFile=null, hits=null, createDtm=null, updateDtm=null]
 		
-		System.out.println("pageHandlerDto : " + pageHandlerDto);
+		System.out.println("pageHandlerDto : " + sc);
 		// PageHandlerDto [totalCnt=0, pageSize=10, naviSize=10, totalPage=0, page=1, 
 		//                 beginPage=0, endPage=0, showPrev=false, showNext=false]		
 		// 게시판 삭제하기 
@@ -297,7 +285,7 @@ public class BoardController {
 	  	pageSize                ph.pageSize
 	 */
 	@RequestMapping("/board/goToUpdate.do")
-	public ModelAndView goToUpdate(BoardDto boardDto, PageHandlerDto pageHandlerDto, HttpServletRequest request) {
+	public ModelAndView goToUpdate(BoardDto boardDto, SearchCondition sc, HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView();
 
 		boardDto.setTypeSeq(typeSeq); // 자유게시판2
@@ -305,7 +293,7 @@ public class BoardController {
 		System.out.println("수정 페이지에 있는 boardDto 값 : " + boardDto);
 		// BoaedDto [boardSeq=8186, typeSeq=2, memberId=null, memberNick=null, title=null, 
 		//           content=null, hasFile=null, hits=null, createDtm=null, updateDtm=null]
-		System.out.println("수정 페이지에 있는 pageHandlerDto 값 : " + pageHandlerDto);
+		System.out.println("수정 페이지에 있는 pageHandlerDto 값 : " + sc);
 		// PageHandlerDto [totalCnt=0, pageSize=10, naviSize=10, totalPage=0, page=1, 
 		//                 beginPage=0, endPage=0, showPrev=false, showNext=false]
 		
@@ -329,7 +317,7 @@ public class BoardController {
 		mv.addObject("attFiles", attFiles); // 첨부파일 정보
 		
 		mv.addObject("update", update); // BoaedDto
-		mv.addObject("ph", pageHandlerDto); // PageHandlerDto 
+		mv.addObject("ph", sc); // PageHandlerDto 
 		mv.setViewName("/board/update"); // 페이지
 		mv.addObject("msg", "수정 페이지");
 		
@@ -347,7 +335,7 @@ public class BoardController {
 	*/
 	@RequestMapping("/board/update.do")
 	@ResponseBody // !!!!!!!!!!!! 비동기 응답 
-	public HashMap<String, Object> update(BoardDto boardDto, PageHandlerDto pageHandlerDto, MultipartHttpServletRequest mReq) {
+	public HashMap<String, Object> update(BoardDto boardDto, SearchCondition sc, MultipartHttpServletRequest mReq) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		
 		boardDto.setTypeSeq(typeSeq); // 자유게시판2
@@ -362,12 +350,12 @@ public class BoardController {
 		// 수정에 성공? 실패?
 		if(update == 1) {
 			map.put("result", update); // BoaedDto
-			map.put("ph", pageHandlerDto); // PageHandlerDto 
+			map.put("ph", sc); // PageHandlerDto 
 			map.put("nextPage", "/board/list"); // 페이지
 			map.put("msg", "게시글 수정에 성공하였습니다");
 		}else {
 			map.put("update", update); // BoaedDto
-			map.put("ph", pageHandlerDto); // PageHandlerDto 
+			map.put("ph", sc); // PageHandlerDto 
 			map.put("nextPage", "/board/list"); // 페이지
 			map.put("msg", "게시글 수정에 실패하였습니다");
 		}
