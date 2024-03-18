@@ -23,18 +23,24 @@ $(document).ready(function(){
 	function customAjax(url, responseUrl) {
 	    var formData = $('#searchForm').serialize(); // 폼 데이터를 직렬화하여 가져옴
 	    $.ajax({
-	        url : url,
-	        data : formData,
-	        type : 'POST',
-	        dataType : "text",
+	        url : url + '?' + formData, // URL에 직렬화한 데이터를 추가하여 GET 요청을 보냄
+	        // data : formData,
+	        type : 'GET', // GET 방식으로 변경
+	        dataType : "text", // 반환되는 데이터 타입이 텍스트임을 명시
+	        processData : false,
+            contentType : false,
 	        success : function (result, textStatus, XMLHttpRequest) {
-	            var data = $.parseJSON(result);
-	            alert(data.msg);
-	            var boardSeq = data.boardSeq;
+	            // var data = $.parseJSON(result);
+	            // alert(data.msg);
+	            // var boardSeq = data.boardSeq;
 	            console.log("result내용 : " + result);
 	            console.log("textStatus내용 : " + textStatus);
 	            console.log("XMLHttpRequest내용 : " + XMLHttpRequest);
 	            
+	            // alert("성공하면 다음으로 이동할 URL: " + responseUrl);
+	            // 성공하면 다음으로 이동할 URL: /board/list.do?page=1&pageSize=10&option=A&keyword=%EC%8B%A0%EB%B2%94%EC%A4%80
+	            
+	            // movePage('/member/changePassword.do?memberId=' + memberId + '&email=' + email); // 수정된 부분
 	            movePage(responseUrl); // 성공하면 게시판으로
 	        },
 	        error : function (XMLHttpRequest, textStatus, errorThrown) {
@@ -94,7 +100,7 @@ $(document).ready(function(){
                         <tr>
                             <td class="text-center">${list.boardSeq}</td>
                             <!-- 게시글 제목을 클릭하면 해당 게시글로 이동하도록 링크 추가 -->
-           					<td><a href="javascript:movePage('/board/read.do?boardSeq=${list.boardSeq}&page=${ph.sc.page}&pageSize=${ph.sc.pageSize}')">${list.title}</a></td>
+           					<td><a href="javascript:movePage('/board/read.do?boardSeq=${list.boardSeq}&page=${ph.sc.page}&pageSize=${ph.sc.pageSize}&option=${ph.sc.option}&keyword=${ph.sc.keyword}')">${list.title}</a></td>
                             <td>${list.memberId}</td>
                             <td>${list.hits}</td>
                             <td>${list.hasFile}</td>
@@ -118,13 +124,13 @@ $(document).ready(function(){
 					
 					<!-- 내비게이션 -->
 					<c:forEach var="i" begin="${ph.beginPage}" end="${ph.endPage}"> <!-- 내비게이션의 첫번째와 마지막 페이지 -->
-						<li class="page-item <c:if test="${i eq ph.sc.page}">active</c:if>"><a class="page-link" href="javascript:movePage('/board/list.do?page=${i}&pageSize=${ph.sc.pageSize}')">${i}</a></li>
+						<li class="page-item <c:if test="${i eq ph.sc.page}">active</c:if>"><a class="page-link" href="javascript:movePage('/board/list.do?page=${i}&pageSize=${ph.sc.pageSize}&option=${ph.sc.option}&keyword=${ph.sc.keyword}')">${i}</a></li>
 					</c:forEach>
 					
 					<!-- 다음 페이지로 가는 링크 -->
 			        <c:if test="${ph.showNext}">
 			        <!-- c:if test="${ph.showNext && ph.endPage < ph.totalPage}" -->
-					    <li class="page-item"><a class="page-link" href="javascript:movePage('/board/list.do?page=${ph.endPage+1}&pageSize=${ph.sc.pageSize}')">&raquo;</a></li>
+					    <li class="page-item"><a class="page-link" href="javascript:movePage('/board/list.do?page=${ph.endPage+1}&pageSize=${ph.sc.pageSize}&option=${ph.sc.option}&keyword=${ph.sc.keyword}')">&raquo;</a></li>
 					</c:if> 
 			        
 			    </ul>

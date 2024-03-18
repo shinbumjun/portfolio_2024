@@ -13,7 +13,9 @@ $(document).ready(function(){
 	$('#btnDelete').on('click', function(){      
 		if(confirm("삭제하시겠습니까?")){
 	        // AJAX 호출을 통해 데이터를 삭제하고 결과를 처리하는 함수 호출
-	        customAjax('<c:url value="/board/delete.do"/>' + '?boardSeq=' + '${read.boardSeq}', "/board/list.do" + '?page=' + '${ph.page}' + '&pageSize=' + '${ph.pageSize}');
+	        customAjax('<c:url value="/board/delete.do"/>' + '?boardSeq=' + '${read.boardSeq}', 
+	        		"/board/list.do" + '?page=' + '${ph.page}' + '&pageSize=' + '${ph.pageSize}' + '&option=' + '${ph.option}' + '&keyword=' + '${ph.keyword}');
+
 	        
 	        // var deleteUrl = '<c:url value="/board/delete.do"/>';  // 삭제 URL
 	        // var listUrl = '<c:url value="/board/list.do"/>';  // 리스트 URL
@@ -138,7 +140,7 @@ $(document).ready(function(){
 							   		</a>
 				        		</c:when>
 				        		<c:otherwise>
-				        			<a href="javascript:movePage('/board/list.do?page=${ph.page}&pageSize=${ph.pageSize}&boardSeq=${read.boardSeq}&typeSeq=${read.typeSeq}')">
+				        			<a href="javascript:movePage('/board/list.do?page=${ph.page}&pageSize=${ph.pageSize}&option=${ph.option}&keyword=${ph.keyword}&boardSeq=${read.boardSeq}&typeSeq=${read.typeSeq}')">
 								        <button type="button" class="btn btn-primary">목록</button>
 							   		</a>
 				        		</c:otherwise>
