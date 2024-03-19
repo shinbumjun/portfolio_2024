@@ -118,14 +118,14 @@ public class MemberServiceImpl implements MemberService {
 
 	// 회원가입 완료하면 이메일로 환영문자 보내기
 	@Override
-	public boolean Welcomeemail(String email, HttpServletRequest request) {
+	public boolean Welcomeemail(MemberDto memberDto, HttpServletRequest request) {
 		
-		MemberDto emailchick = mDao.Welcomeemail(email); // null이면 발송x
+		MemberDto emailchick = mDao.Welcomeemail(memberDto); // null이면 발송x
 		
 		if(emailchick != null) { // null이 아니면 true
 			EmailDto emailDto = new EmailDto();
 			emailDto.setFrom("sinbumjun123@naver.com"); // 이메일을 발신하는 사람의 이메일 주소
-			emailDto.setReceiver(email); // 이메일을 수신하는 사람의 이메일 주소, 회원가입한 이메일로 메일 발송
+			emailDto.setReceiver(memberDto.getEmail()); // 이메일을 수신하는 사람의 이메일 주소, 회원가입한 이메일로 메일 발송
 			
 			// 이메일 본문에 링크 추가 (*추가한 내용)
 	        // String link = "<a href='https://www.notion.so/portfolio_2024-accdde7bd46a43f6b405d7453738f13b?pvs=4'> 신범준의 노션 링크입니다</a>"; // 이메일 본문에 추가할 링크

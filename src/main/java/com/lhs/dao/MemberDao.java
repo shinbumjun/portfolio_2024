@@ -27,7 +27,7 @@ public interface MemberDao {
 	public MemberDto Loginchick(String memberId);
 
 	// 회원가입 완료하면 이메일로 환영문자 보내기
-	public MemberDto Welcomeemail(String email);
+	public MemberDto Welcomeemail(MemberDto memberDto);
 
 	// 비밀번호 찾기
 	public MemberDto Passwordchick(HashMap<String, String> member);

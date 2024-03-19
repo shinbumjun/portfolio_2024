@@ -5,6 +5,19 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script type="text/javascript">
+
+function isValidEmail(email) {
+    // 이메일 주소를 검증하는 정규식
+    var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+}
+
+function isValidPassword(password) {
+    // 비밀번호를 검증하는 정규식
+    var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+\\\|\[\]{};:'",.<>?]).{8,}$/;
+    return passwordRegex.test(password);
+}
+
 $(document).ready(function(){
 	$('#msgDiv').hide();
 	$("#loading-div-background").css({ opacity: 1 });
@@ -17,6 +30,46 @@ $(document).ready(function(){
 			return;
 		}
 		
+		// Check if email is valid (이메일 유효성 검사)
+		if (!isValidEmail($('#email').val())) {
+		    var msgTag = $('<strong>').text("유효한 이메일 주소를 입력하세요.");
+		    $('#msgDiv').html(msgTag).show();
+		    e.preventDefault();
+		    return;
+		}
+		
+		// Check if password is valid (비밀번호 유효성 검사)
+        if (!isValidPassword($('#memberPw').val())) {
+            var msgTag = $('<strong>').text("비밀번호는 소문자, 대문자, 숫자, 특수문자 포함하여 8자 이상이어야 합니다.");
+            $('#msgDiv').html(msgTag).show();
+            e.preventDefault();
+            return;
+        }
+		
+		// Check if passwords match (비밀번호, 비밀번호 확인 같은지 확인)
+        if ($('#memberPw').val() != $('#pwAgain').val()) {
+            var msgTag = $('<strong>').text("비밀번호가 일치하지 않습니다.");
+            $('#msgDiv').html(msgTag).show();
+            e.preventDefault();
+            return;
+        }
+		
+     	// Check if ID length is at least 7 characters (ID 7글자 이상)
+        if ($('#memberId').val().length < 7) {
+            var msgTag = $('<strong>').text("ID는 7글자 이상이어야 합니다.");
+            $('#msgDiv').html(msgTag).show();
+            e.preventDefault();
+            return;
+        }
+		
+     	// Check if each input does not exceed 150 characters (150글자 이상x)
+        if ($('#memberId').val().length > 150 || $('#memberName').val().length > 150 || $('#memberNick').val().length > 150 || $('#memberPw').val().length > 150 || $('#pwAgain').val().length > 150 || $('#email').val().length > 150) {
+            var msgTag = $('<strong>').text("각 입력란은 150글자 이하로 입력해야 합니다.");
+            $('#msgDiv').html(msgTag).show();
+            e.preventDefault();
+            return;
+        }
+     	
 		// overlay 보이기
 		$("#loading-div-background").css({'z-index' : '9999'}).show();
 		

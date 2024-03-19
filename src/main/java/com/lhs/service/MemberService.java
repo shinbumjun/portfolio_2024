@@ -34,7 +34,7 @@ public interface MemberService {
 	public boolean Loginchick(MemberDto memberDto);
 
 	// 회원가입 완료하면 이메일로 환영문자 보내기
-	public boolean Welcomeemail(String email, HttpServletRequest request);
+	public boolean Welcomeemail(MemberDto memberDto, HttpServletRequest request);
 
 	// 비밀번호 찾기
 	public String Passwordchick(MemberDto memberDto, Model model, HttpServletRequest request);
