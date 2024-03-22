@@ -156,18 +156,37 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		WHERE board_seq=#{boardSeq} AND type_seq=#{typeSeq};
 	</update>
 
-
+	<!-- 중복 sql -->
+	<sql id="searchCondition">
+		<choose>
+				<when test='option != null and option=="T"'>
+					and hits > #{keyword}
+				</when>
+				<when test='option != null and option=="W"'>
+					and has_file = #{keyword}
+				</when>
+				<otherwise>
+					and (title like concat('%', #{keyword}, '%')
+					or member_id like concat('%', #{keyword}, '%'))
+				</otherwise>
+			</choose>
+	</sql>
+	
 	<!-- 
 		검색기능 
 		typeSeq = 2
 		keyword, offset, pageSize 값을 받아야 한다
+		
+		제목+글쓴이 -> A
+		조회수 이상 -> T
+		첨부파일 유무 -> W
 	-->
 	<select id="searchSelectPage" parameterType="SearchCondition" resultType="BoardDto">
 		SELECT board_seq, title, member_id, hits, has_file, create_dtm
 		FROM S_shinbumjun.board
 		where true
+		<include refid="searchCondition"/>
 		and type_seq = 2
-		and title like concat('%', #{keyword}, '%')
 		ORDER BY board_seq desc
     	LIMIT #{offset}, #{pageSize};
 	</select>
@@ -180,10 +199,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		SELECT count(*)
 		FROM S_shinbumjun.board
 		where true
+		<include refid="searchCondition"/>
 		and type_seq = 2
-		and title like concat('%', #{keyword}, '%');
 	</select>
-
 
 </mapper>
 

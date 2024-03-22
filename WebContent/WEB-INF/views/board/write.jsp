@@ -133,9 +133,9 @@ function customAjax(url, responseUrl) {
 
 										<div class="row">
 											<div class="col-md-8 col-sm-8">
-												<label>제목</label>
-												<input type="text" name="title" id="title" value="" class="form-control required">
-											</div>
+										        <label>제목</label>
+										        <input type="text" name="title" id="title" value="<c:out value="${title}" />" class="form-control required">
+										    </div>
 											
 											<div class="col-md-4 col-sm-4">
 												<label>작성자</label>
@@ -147,10 +147,9 @@ function customAjax(url, responseUrl) {
 
 										<div class="row">
 											<div class="col-md-12 col-sm-12">
-												<label>내용</label>
-												<textarea class="summernote form-control" data-height="200" data-lang="en-US" name="content" id="content" rows="4"></textarea>
-										
-											</div>
+										        <label>내용</label>
+										        <textarea class="summernote form-control" data-height="200" data-lang="en-US" name="content" id="content" rows="4"><c:out value="${content}" /></textarea>
+										    </div>
 										</div>
 
 										<div class="row">

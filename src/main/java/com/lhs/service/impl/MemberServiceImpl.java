@@ -238,6 +238,13 @@ public class MemberServiceImpl implements MemberService {
 		
 		return mDao.Nick(memberDto);
 	}
+
+	// 3. 각 댓글의 작성자 이름 가져오기
+	@Override
+	public String getReplyName(int memberIdx) {
+		// TODO Auto-generated method stub
+		return mDao.getReplyName(memberIdx);
+	}
 }
 
 

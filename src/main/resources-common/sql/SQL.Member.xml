@@ -117,6 +117,16 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	 	where member_id = #{memberId};
 	 </select>
 	 
+	<!--  
+		3. 각 댓글의 작성자 이름 가져오기
+		public String getReplyName(int memberIdx);
+	-->
+	<select id="getReplyName" parameterType="int" resultType="String">
+		SELECT member_nick
+		FROM S_shinbumjun.`member`
+		where member_idx  = #{memberIdx};
+	</select>
+	
 	<delete id = "delMember" parameterType="HashMap">
 		
 	</delete>		

@@ -37,6 +37,9 @@ public interface MemberDao {
 
 	// 별명가져오기
 	public MemberDto Nick(MemberDto memberDto);
+
+	// 3. 각 댓글의 작성자 이름 가져오기
+	public String getReplyName(int memberIdx);
 }
 
 

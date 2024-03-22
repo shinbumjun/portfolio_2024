@@ -50,6 +50,8 @@ $(document).ready(function(){
 	    });
 	}  
 });
+
+
 </script>
 
 </head>
@@ -62,9 +64,9 @@ $(document).ready(function(){
 		<div class="search-container">
 		    <form id="searchForm" class="search-form" method="post">
 		        <select class="search-option" name="option">
-		            <option value="A" ${ph.sc.option=='A' || ph.sc.option=='' ? "selected" : ""}>제목+내용</option>
-		            <option value="T" ${ph.sc.option=='T' ? "selected" : ""}>제목만</option>
-		            <option value="W" ${ph.sc.option=='W' ? "selected" : ""}>작성자</option>
+		            <option value="A" ${ph.sc.option=='A' || ph.sc.option=='' ? "selected" : ""}>제목+글쓴이</option>
+		            <option value="T" ${ph.sc.option=='T' ? "selected" : ""}>조회수 이상(숫자)</option>
+		            <option value="W" ${ph.sc.option=='W' ? "selected" : ""}>첨부파일 유무(Y/N)</option>
 		        </select>
 		
 		        <input type="text" name="keyword" class="search-input" type="text" value="${ph.sc.keyword}" placeholder="검색어를 입력해주세요">

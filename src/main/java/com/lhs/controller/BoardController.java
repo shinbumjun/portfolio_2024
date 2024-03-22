@@ -3,6 +3,7 @@ package com.lhs.controller;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,9 +23,12 @@ import org.springframework.web.servlet.ModelAndView;
 import com.lhs.dto.AttFileDto;
 import com.lhs.dto.BoardDto;
 import com.lhs.dto.PageHandlerDto;
+import com.lhs.dto.ReplyDto;
 import com.lhs.dto.SearchCondition;
 import com.lhs.service.AttFileService;
 import com.lhs.service.BoardService;
+import com.lhs.service.MemberService;
+import com.lhs.service.ReplyService;
 import com.lhs.util.FileUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +40,12 @@ public class BoardController {
 	@Autowired BoardService bService;
 	@Autowired AttFileService attFileService;
 	@Autowired FileUtil fileUtil;
+	
+	@Autowired
+	MemberService mService;
+	
+	@Autowired
+    private ReplyService replyService;
 
 	private String typeSeq = "2";
 
@@ -143,9 +153,6 @@ public class BoardController {
 		// [BoardAttachDto [fileIdx=34, typeSeq=2, boardSeq=10776, fileName=지원1.pdf, ...
 		
 		
-
-		
-		
 		// 조회수 +1
 		bService.updateHits(read);
 		
@@ -178,12 +185,34 @@ public class BoardController {
 		// *게시판 읽기 글을 작성한 사용자 비교하기 위해서
 		// jsp 단에서 ${read.memberId}로 확인이 됨
 		
+        
+        
+        // 댓글 출력하기 (boardSeq=10784, typeSeq=2)
+        List<ReplyDto> ReplyList = replyService.getReplyList(boardDto);
+        // 3. 각 댓글의 작성자 이름 가져오기
+ 		List<String> ReplyNames = new ArrayList<>(); // 댓글 작성자 이름을 담을 리스트 생성
+ 		for (ReplyDto reply : ReplyList) {
+ 		    // 댓글의 작성자 식별자(memberIdx) 가져오기
+ 		    int memberIdx = reply.getMemberIdx();
+ 		    // 댓글의 작성자 식별자를 이용하여 작성자 이름 가져오기
+ 		    String ReplyName = mService.getReplyName(memberIdx);
+ 		    // 작성자 이름을 리스트에 추가
+ 		    ReplyNames.add(ReplyName);
+ 		}
+ 		System.out.println("게시판의 댓글 작성자들 : " + ReplyNames);
+        
+        
+        
+        // 댓글 내용, 댓글 작성자
+ 		mv.addObject("ReplyList", ReplyList);
+ 		mv.addObject("ReplyNames", ReplyNames);
+        
 		// 목록 버튼을 누르면 해당 페이지를 보여주는 게시판 위치로
 		mv.addObject("ph", sc);
 		
 		// 1. 첨부파일 읽기1
 		mv.addObject("attFiles", attFiles);
-		
+		mv.addObject("ReplyList", ReplyList);
 		mv.addObject("read", read);
 		mv.addObject("nextPage", "/board/read");
 		mv.addObject("msg", "자유게시판 게시글");

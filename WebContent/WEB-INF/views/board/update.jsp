@@ -9,6 +9,37 @@
 
 	//jQuery event(click) 처리 
 	$(document).ready(function(){
+		
+		$('#btnUpdate2').on('click', function(){ 
+			// 온클릭시 굳이 function doWrite() 펑션 선언,호출하지 말고 바로 종속시켜 기능 먹인다. 
+			// 여기서 바로 기능 구현. --> function의 선언을 줄인다.  
+			//따로 function 만들게 되면 해당 기능 수행하는 연결점 찾기 어렵다.. (펑션이름 일일이 검색해야함) 
+			//여기서는 id= btnWrite 를 onClick 시 이 기능을 수행한다. 라고 바로 연결지어 확인가능.. 
+
+			//jQuery  #[id]
+			var title = $('#title').val();
+
+			if(title.length == 0){
+				alert("제목을 입력하세요.");
+				$('#title').focus();
+				
+				return;		
+			}
+			//ck editor 가 textarea 위에 씌워져있어서 ck editor 불러와야함. 
+			var content = _summernote.code();
+			if(content.length < 0 ){
+				alert("내용을 입력하세요.");
+				_summernote.focus();
+				return;		
+			}
+			$('#content').val(content);
+			
+			// list참고 : /board/read.do?boardSeq=${list.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}
+			// customAjax("<c:url value='/board/update.do' />", "/board/read.do?boardSeq=${update.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}");
+			customAjax("<c:url value='/board/update.do' />", "/board/list.do?page=${ph.page}&pageSize=${ph.pageSize}");
+		
+		}); //#btnUpdate end 	
+		
 		/** Summernote HTML Editor
 		<textarea class="summernote form-control" data-height="200"></textarea>
 		 ***************************** **/
@@ -46,37 +77,6 @@
 			});
 		}
 					
-		$('#btnUpdate').on('click', function(){ 
-			alert("수정");
-		
-			// 온클릭시 굳이 function doWrite() 펑션 선언,호출하지 말고 바로 종속시켜 기능 먹인다. 
-			// 여기서 바로 기능 구현. --> function의 선언을 줄인다.  
-			//따로 function 만들게 되면 해당 기능 수행하는 연결점 찾기 어렵다.. (펑션이름 일일이 검색해야함) 
-			//여기서는 id= btnWrite 를 onClick 시 이 기능을 수행한다. 라고 바로 연결지어 확인가능.. 
-
-			//jQuery  #[id]
-			var title = $('#title').val();
-
-			if(title.length == 0){
-				alert("제목을 입력하세요.");
-				$('#title').focus();
-				
-				return;		
-			}
-			//ck editor 가 textarea 위에 씌워져있어서 ck editor 불러와야함. 
-			var content = _summernote.code();
-			if(content.length < 0 ){
-				alert("내용을 입력하세요.");
-				_summernote.focus();
-				return;		
-			}
-			$('#content').val(content);
-			
-			// list참고 : /board/read.do?boardSeq=${list.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}
-			// customAjax("<c:url value='/board/update.do' />", "/board/read.do?boardSeq=${update.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}");
-			customAjax("<c:url value='/board/update.do' />", "/board/list.do?page=${ph.page}&pageSize=${ph.pageSize}");
-		
-		}); //#btnUpdate end 		
 }); //ready End 
 
 function customAjax(url, responseUrl) {
@@ -256,7 +256,7 @@ function deleteFile(fileIdx, boardSeq){
 												목록 
 											</button>
 										</a>
-										<button type="button" class="btn btn-primary" id="btnUpdate">
+										<button type="button" class="btn btn-primary" id="btnUpdate2">
 											수정
 										</button>
 									</div>

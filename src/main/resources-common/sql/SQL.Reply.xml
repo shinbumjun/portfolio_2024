@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.lhs.dao.ReplyDao">
+
+	<!-- 특정 게시물 삭제 -->
+	
+	<!-- 특정 게시물의 댓글 수 -->
+
+	<!-- 게시물 삭제 -->
+	
+	<!-- 
+		1. 댓글 작성
+		public int addReply(HashMap<String, Object> add);	
+		
+		{typeSeq=2, memberIdx=40, replyContent=첫 댓글 작성, boardSeq=10784, memberType=1, memberId=bum.1005(x)}
+	-->
+	<insert id="addReply" parameterType="map">
+		INSERT INTO S_shinbumjun.reply
+		(type_seq, board_seq, reply_content, member_idx, create_dtm, member_type)
+		VALUES(#{typeSeq}, #{boardSeq}, #{replyContent}, #{memberIdx}, DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'), #{memberType});
+	</insert>
+	
+	<!-- 
+		게시물의 모든 댓글 
+		2. 댓글 내용 가져오기 (게시판의 모든 댓글)
+		public ReplyDto getReplyList(BoardDto boardDto);
+		
+		boardSeq=10784, typeSeq=2
+	-->
+	<select id="getReplyList" parameterType="BoardDto" resultType="ReplyDto">
+		SELECT reply_seq, type_seq, board_seq, reply_content, member_idx, create_dtm, pcno, up_date, member_type
+		FROM S_shinbumjun.reply
+		where board_seq = #{boardSeq}
+		and type_seq = #{typeSeq}
+		order by create_dtm desc;
+	</select>
+	
+	
+	<!-- 해당 댓글 보기 -->
+	
+	<!-- 댓글 수정 -->
+
+</mapper>
