@@ -4,11 +4,96 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
 <script src="<c:url value='/resources/js/scripts.js'/>"></script>
+
+    <!-- 추가한 CSS 코드 -->
+    <style>
+	    /* 작성자 스타일 */
+	    .author {
+	        font-weight: bold; /* 굵은 글꼴 */
+	        font-style: italic; /* 이탤릭체 */
+	        color: #333; /* 글자 색상 */
+	    }
+	
+	    /* 댓글 스타일 */
+	    .comment {
+	        margin-bottom: 20px; /* 아래 여백 추가 */
+	        padding: 10px; /* 패딩 추가 */
+	        border: 1px solid #ddd; /* 테두리 추가 */
+	        border-radius: 5px; /* 모서리 둥글게 */
+	    }
+    
+        .btnDeleteReply {
+	        background-color: #ffcccc; /* 연한 빨강 */
+	        color: #333; /* 글자색 */
+	        border: none;
+	        padding: 8px 16px;
+	        text-align: center;
+	        text-decoration: none;
+	        display: inline-block;
+	        font-size: 16px;
+	        margin: 4px 2px;
+	        cursor: pointer;
+	        border-radius: 4px;
+	    }
+	
+	    .btnDeleteReply:hover {
+	        background-color: #ff9999; /* 연한 빨강 - 조금 어둡게 */
+	    }
+	    
+	    .clearfix::after {
+	        content: "";
+	        clear: both;
+	        display: table;
+	    }
+    </style>
 
 <script type="text/javascript">
 $(document).ready(function(){	
+	
+	
+		// 댓글 삭제 버튼 클릭 이벤트 등록
+	    $('#replyList').on('click', '.btnDeleteReply', function() {
+	        var replySeq = $(this).attr('id').replace('btnDeleteReply', ''); // 클릭한 삭제 버튼의 id에서 replySeq 추출
+	        var boardSeq = ${read.boardSeq}; // 게시글 번호
+	
+	        if(confirm("댓글을 삭제하시겠습니까?")) {
+	            DeleteReply('<c:url value="/reply/delete.do"/>', 
+	                "/board/read.do?boardSeq=${read.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}&option=${ph.option}&keyword=${ph.keyword}",
+	                replySeq, // 댓글 번호
+	                boardSeq // 게시글 번호
+	            );
+	        }
+	    });
+	
+		function DeleteReply(url, responseUrl, replySeq, boardSeq) {
+			var formData = new FormData();
+		    formData.append('replySeq', replySeq); // 댓글 번호 추가
+		    formData.append('boardSeq', boardSeq); // 게시글 번호 추가
+	           $.ajax({
+	               url : url,
+	               data : formData,
+	               type : 'POST',
+	               dataType : "text",
+	               processData : false,
+	               contentType : false,
+	               success : function (result, textStatus, XMLHttpRequest) {
+	                   var data = $.parseJSON(result);
+	                   alert(data.msg);
+	                   var boardSeq = data.boardSeq;
+	                   movePage(responseUrl); 
+	               },
+	               error : function (XMLHttpRequest, textStatus, errorThrown) {
+	                  alert("에러 발생\n관리자에게 문의바랍니다.");
+	                  console.log("에러\n" + XMLHttpRequest.responseText);
+	                 }
+	          });
+	   }
+	
+	    
+	    
+	    
+	    
 	
 	// 댓글 작성 버튼 클릭시
 	$('#btnSubmitReply').on('click', function() {
@@ -48,10 +133,6 @@ $(document).ready(function(){
                  }
           });
    }
-	
-	
-	
-	
 	
 	
 	
@@ -223,27 +304,28 @@ $(document).ready(function(){
 					</c:if>
 					
 					<!-- 댓글 리스트 -->
-<div id="replyList">
-    <!-- 댓글 목록을 출력하기 위한 부분 -->
-    <c:if test="${not empty ReplyList}">
-        <h3>댓글 목록</h3>
-        <div class="comment-list">
-            <!-- 각 댓글을 출력 -->
-            <c:forEach var="reply" items="${ReplyList}" varStatus="status">
-                <div class="comment">
-                    <!-- 댓글 작성자와 댓글 내용을 함께 출력 -->
-                    <strong>${ReplyNames[status.index]}:</strong> ${reply.replyContent}
-                </div>
-            </c:forEach>
-        </div>
-    </c:if>
-    <!-- 댓글이 없는 경우 -->
-    <c:if test="${empty ReplyList}">
-        <p>댓글이 없습니다.</p>
-    </c:if>
-</div>
-			
-		</div>
+					<div id="replyList">
+					    <!-- 댓글 목록을 출력하기 위한 부분 -->
+					    <c:if test="${not empty ReplyList}">
+					        <h3>댓글 목록</h3>
+					        <div class="comment-list">
+					            <!-- 각 댓글을 출력 -->
+					            <c:forEach var="reply" items="${ReplyList}" varStatus="status">
+					                <div class="comment clearfix"> <!-- clearfix 클래스 추가 -->
+					                    <!-- 댓글 작성자와 댓글 내용을 함께 출력 -->
+					                    <div class="comment-content" style="float:left;">
+					                        <strong>${ReplyNames[status.index]}:</strong> ${reply.replyContent}
+					                    </div>
+					                    <!-- 댓글 삭제 버튼 -->
+					                    <c:if test="${sessionScope.memberId == ReplyNames[status.index]}">
+					                            <button type="button" class="btnDeleteReply" id="btnDeleteReply${reply.replySeq}" style="float:right;">삭제</button>
+					                            <div style="clear:both;"></div> <!-- float 해제 -->
+					                    </c:if>
+					                </div>
+					            </c:forEach>
+					        </div>
+					    </c:if>
+					</div>
 	</section>
 
 </body>

@@ -56,6 +56,13 @@ public class ReplyServiceImpl implements ReplyService {
 		System.out.println("게시물의 댓글 가져오기 위한 정보 : " + boardDto);
 		return replyDao.getReplyList(boardDto);
 	}
+
+	// 3. 해당 게시물의 특정 댓글 삭제하기
+	@Override
+	public int deleteReply(ReplyDto replyDto) {
+		
+		return replyDao.deleteReply(replyDto);
+	}
 	
 }
 

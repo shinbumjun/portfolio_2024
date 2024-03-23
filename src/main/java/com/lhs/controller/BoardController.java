@@ -189,6 +189,9 @@ public class BoardController {
         
         // 댓글 출력하기 (boardSeq=10784, typeSeq=2)
         List<ReplyDto> ReplyList = replyService.getReplyList(boardDto);
+        System.out.println("해당 게시물의 댓글 내용 : " + ReplyList);
+        // [ReplyDto [replySeq=22, typeSeq=2, boardSeq=10784, memberIdx ...
+        
         // 3. 각 댓글의 작성자 이름 가져오기
  		List<String> ReplyNames = new ArrayList<>(); // 댓글 작성자 이름을 담을 리스트 생성
  		for (ReplyDto reply : ReplyList) {
@@ -200,9 +203,8 @@ public class BoardController {
  		    ReplyNames.add(ReplyName);
  		}
  		System.out.println("게시판의 댓글 작성자들 : " + ReplyNames);
-        
-        
-        
+
+ 		
         // 댓글 내용, 댓글 작성자
  		mv.addObject("ReplyList", ReplyList);
  		mv.addObject("ReplyNames", ReplyNames);

@@ -14,4 +14,7 @@ public interface ReplyService {
 	// 2. 댓글 내용 가져오기 (게시판의 모든 댓글)
 	public List<ReplyDto> getReplyList(BoardDto boardDto);
 
+	// 3. 해당 게시물의 특정 댓글 삭제하기
+	public int deleteReply(ReplyDto replyDto);
+
 }

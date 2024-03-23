@@ -36,6 +36,13 @@ public class ReplyRestController {
 	
 	private String typeSeq = "2";
 	
+	/*
+	 	1. 댓글 작성하기
+	 	replyContent : 댓글 내용
+	 	memberId : 작성자 id
+	 	boardSeq : 게시글 번호
+	 
+	 */
 	@PostMapping("/reply/add.do")
 	public HashMap<String, Object> addReply(
 					@RequestParam("replyContent") String replyContent,
@@ -91,6 +98,34 @@ public class ReplyRestController {
 		}
 		
 		return map;
+	}
+	
+	
+	
+	/*
+	 	2. 댓글 삭제하기 
+	 	
+	 	replySeq: 22
+		boardSeq: 10784
+	 */
+	@PostMapping("/reply/delete.do")
+	public HashMap<String, Object> deleteReply(ReplyDto replyDto){
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			
+			System.out.println("댓글 삭제하기 위해서 필요한 정보들 : " + replyDto);
+			// replySeq=22, typeSeq=null, boardSeq=10784, ... 
+			
+			// 3. 해당 게시물의 특정 댓글 삭제하기
+			int result = replyService.deleteReply(replyDto);
+			System.out.println("1이면 댓글 삭제, 0이면 삭제 실패 : " + result);
+			
+			if(result == 1) {
+				map.put("msg", "댓글이 삭제 되었습니다");
+			}else {
+				map.put("msg", "댓글이 삭제가 실패 되었습니다");
+			}
+			
+			return map;
 	}
 }
 

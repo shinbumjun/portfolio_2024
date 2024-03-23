@@ -122,7 +122,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		public String getReplyName(int memberIdx);
 	-->
 	<select id="getReplyName" parameterType="int" resultType="String">
-		SELECT member_nick
+		SELECT member_id
 		FROM S_shinbumjun.`member`
 		where member_idx  = #{memberIdx};
 	</select>
