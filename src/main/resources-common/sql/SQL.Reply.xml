@@ -45,15 +45,41 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		and board_seq =#{boardSeq};
 	</delete>
 	
+	<!-- 
+		댓글 수정
+		4. 해당 게시물의 특정 댓글 수정하기
+		public int updateReply(ReplyDto replyDto);
+		
+		replySeq 정보를 가지고 replyContent 수정 (up_date 현재 시간으로 수정해준다)
+	-->
+	<update id="updateReply" parameterType="ReplyDto">
+		UPDATE S_shinbumjun.reply
+		SET reply_content=#{replyContent}, up_date=DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+		WHERE reply_seq=#{replySeq};
+	</update>
+	
+	<!-- 
+		게시물 삭제했을때 해당 게시물에 있는 댓글 전체 삭제 
+		5. 게시글에 있는 댓글 모두 삭제
+		public int AlldeleteReply(BoardDto boardDto);
+	-->
+	<delete id="AlldeleteReply" parameterType="BoardDto">
+		DELETE FROM S_shinbumjun.reply
+		WHERE board_seq =#{boardSeq};
+	</delete>
+	
 	<!-- 특정 게시물의 댓글 수 -->
 
-	<!-- 게시물 삭제 -->
+	
 	
 
 	
 	
 	<!-- 해당 댓글 보기 -->
 	
-	<!-- 댓글 수정 -->
-
+	
 </mapper>
+
+
+
+

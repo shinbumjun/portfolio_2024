@@ -8,48 +8,128 @@
 
     <!-- 추가한 CSS 코드 -->
     <style>
-	    /* 작성자 스타일 */
-	    .author {
-	        font-weight: bold; /* 굵은 글꼴 */
-	        font-style: italic; /* 이탤릭체 */
-	        color: #333; /* 글자 색상 */
-	    }
-	
-	    /* 댓글 스타일 */
-	    .comment {
-	        margin-bottom: 20px; /* 아래 여백 추가 */
-	        padding: 10px; /* 패딩 추가 */
-	        border: 1px solid #ddd; /* 테두리 추가 */
-	        border-radius: 5px; /* 모서리 둥글게 */
-	    }
-    
-        .btnDeleteReply {
-	        background-color: #ffcccc; /* 연한 빨강 */
-	        color: #333; /* 글자색 */
-	        border: none;
-	        padding: 8px 16px;
-	        text-align: center;
-	        text-decoration: none;
-	        display: inline-block;
-	        font-size: 16px;
-	        margin: 4px 2px;
-	        cursor: pointer;
-	        border-radius: 4px;
-	    }
-	
-	    .btnDeleteReply:hover {
-	        background-color: #ff9999; /* 연한 빨강 - 조금 어둡게 */
-	    }
-	    
-	    .clearfix::after {
-	        content: "";
-	        clear: both;
-	        display: table;
-	    }
+		/* 작성자 스타일 */
+		.author {
+		    font-weight: bold; /* 굵은 글꼴 */
+		    font-style: italic; /* 이탤릭체 */
+		    color: #333; /* 글자 색상 */
+		}
+		
+		/* 댓글 스타일 */
+		.comment {
+		    margin-bottom: 20px; /* 아래 여백 추가 */
+		    padding: 10px; /* 패딩 추가 */
+		    border: 1px solid #ddd; /* 테두리 추가 */
+		    border-radius: 5px; /* 모서리 둥글게 */
+		}
+		
+		/* 삭제 버튼 */
+		.btnDeleteReply {
+		    background-color: #ffcccc; /* 연한 빨강 */
+		    color: #333; /* 글자색 */
+		    border: none;
+		    padding: 8px 16px;
+		    text-align: center;
+		    text-decoration: none;
+		    display: inline-block;
+		    font-size: 16px;
+		    margin: 4px 2px;
+		    cursor: pointer;
+		    border-radius: 4px;
+		}
+		
+		.btnDeleteReply:hover {
+		    background-color: #ff9999; /* 호버 시 연한 빨강 - 조금 어둡게 */
+		}
+		
+		/* 수정 버튼 */
+		.btnEditReply {
+		    background-color: #cceeff; /* 연한 파랑 */
+		    color: #333; /* 글자색 */
+		    border: none;
+		    padding: 8px 16px;
+		    text-align: center;
+		    text-decoration: none;
+		    display: inline-block;
+		    font-size: 16px;
+		    margin: 4px 2px;
+		    cursor: pointer;
+		    border-radius: 4px;
+		}
+		
+		.btnEditReply:hover {
+		    background-color: #99ddff; /* 호버 시 연한 파랑 - 조금 어둡게 */
+		}
     </style>
 
 <script type="text/javascript">
 $(document).ready(function(){	
+	
+	
+	
+	
+    // 수정 버튼 클릭 시 해당 댓글의 내용을 불러와 수정할 수 있는 폼을 띄우는 함수
+    $('#replyList').on('click', '.btnEditReply', function() {
+        var replySeq = $(this).attr('id').replace('btnEditReply', ''); // 클릭한 수정 버튼의 id에서 replySeq 추출
+        var replyContent = $('#replyContent' + replySeq).text().trim(); // 해당 댓글의 내용 가져오기
+        $('#editedReplyContent').val(replyContent); // 수정할 댓글 내용을 폼에 설정
+        $('#editedReplySeq').val(replySeq); // 수정할 댓글의 번호를 폼에 설정
+        $('#editReplyForm').show(); // 수정 폼 보이기
+    });
+
+    // 수정 취소 버튼 클릭 시 수정 폼 숨기기
+    $('#btnCancelEdit').on('click', function() {
+        $('#editReplyForm').hide();
+    });
+
+    // 수정 완료 버튼 클릭 시 댓글 수정 요청
+    $('#btnUpdateReply').on('click', function() {
+        var editedReplyContent = $('#editedReplyContent').val(); // 수정된 댓글 내용 가져오기
+        var editedReplySeq = $('#editedReplySeq').val(); // 수정할 댓글의 번호 가져오기
+        if (editedReplyContent.trim() === '') {
+            alert('댓글을 입력해주세요.');
+            return;
+        }
+        // AJAX를 사용하여 댓글을 수정하는 코드 작성
+        updateReply('<c:url value="/reply/update.do"/>', 
+            "/board/read.do?boardSeq=${read.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}&option=${ph.option}&keyword=${ph.keyword}",
+            editedReplySeq, // 댓글 번호
+            editedReplyContent // 수정된 댓글 내용
+        );
+        $('#editReplyForm').hide(); // 수정 폼 숨기기
+    });
+
+    // 댓글 수정 요청 함수
+    function updateReply(url, responseUrl, replySeq, editedReplyContent) {
+        var formData = new FormData();
+        formData.append('replySeq', replySeq); // 댓글 번호 추가
+        formData.append('replyContent', editedReplyContent); // 수정된 댓글 내용 추가
+        $.ajax({
+            url: url,
+            data: formData,
+            type: 'POST',
+            dataType: "text",
+            processData: false,
+            contentType: false,
+            success: function(result, textStatus, XMLHttpRequest) {
+                var data = $.parseJSON(result);
+                alert(data.msg);
+                var boardSeq = data.boardSeq;
+                movePage(responseUrl); 
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("에러 발생\n관리자에게 문의바랍니다.");
+                console.log("에러\n" + XMLHttpRequest.responseText);
+            }
+        });
+    }
+	
+	
+	
+	
+	
+	
+	
 	
 	
 		// 댓글 삭제 버튼 클릭 이벤트 등록
@@ -136,6 +216,9 @@ $(document).ready(function(){
 	
 	
 	
+	
+	
+	// 게시글 삭제
 	$('#btnDelete').on('click', function(){      
 		if(confirm("삭제하시겠습니까?")){
 	        // AJAX 호출을 통해 데이터를 삭제하고 결과를 처리하는 함수 호출
@@ -303,6 +386,7 @@ $(document).ready(function(){
 						</div>
 					</c:if>
 					
+					
 					<!-- 댓글 리스트 -->
 					<div id="replyList">
 					    <!-- 댓글 목록을 출력하기 위한 부분 -->
@@ -317,15 +401,42 @@ $(document).ready(function(){
 					                        <strong>${ReplyNames[status.index]}:</strong> ${reply.replyContent}
 					                    </div>
 					                    <!-- 댓글 삭제 버튼 -->
-					                    <c:if test="${sessionScope.memberId == ReplyNames[status.index]}">
-					                            <button type="button" class="btnDeleteReply" id="btnDeleteReply${reply.replySeq}" style="float:right;">삭제</button>
-					                            <div style="clear:both;"></div> <!-- float 해제 -->
-					                    </c:if>
+										<c:if test="${sessionScope.memberId == ReplyNames[status.index]}">
+										    <button type="button" class="btnDeleteReply" id="btnDeleteReply${reply.replySeq}" style="float:right; margin-left: 5px;">삭제</button>
+										</c:if>
+										<!-- 댓글 수정 버튼 -->
+										<c:if test="${sessionScope.memberId eq ReplyNames[status.index]}">
+										    <button type="button" class="btn btn-primary btnEditReply" id="btnEditReply${reply.replySeq}" style="float:right;">수정</button>
+										    <div style="clear:both;"></div> <!-- float 해제 -->
+										</c:if>
 					                </div>
 					            </c:forEach>
 					        </div>
 					    </c:if>
 					</div>
+					
+					
+					<!-- 수정할 댓글을 위한 폼 -->
+					<div id="editReplyForm" style="display:none;">
+					    <form id="editForm" name="editForm" method="post">
+					        <div class="row">
+					            <div class="col-md-12">
+					                <div class="form-group">
+					                    <textarea class="form-control" id="editedReplyContent" name="editedReplyContent" placeholder="댓글을 수정하세요" rows="3"></textarea>
+					                </div>
+					                <!-- 수정할 댓글의 번호(hidden) -->
+					                <input type="hidden" id="editedReplySeq" name="editedReplySeq">
+					            </div>
+					            <div class="col-md-12 text-right">
+					                <button type="button" id="btnUpdateReply" class="btn btn-primary">수정 완료</button>
+					                <button type="button" id="btnCancelEdit" class="btn btn-secondary">취소</button>
+					            </div>
+					        </div>
+					    </form>
+					</div>
+
+
+					
 	</section>
 
 </body>

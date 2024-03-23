@@ -17,4 +17,7 @@ public interface ReplyService {
 	// 3. 해당 게시물의 특정 댓글 삭제하기
 	public int deleteReply(ReplyDto replyDto);
 
+	// 4. 해당 게시물의 특정 댓글 수정하기
+	public int updateReply(ReplyDto replyDto);
+
 }

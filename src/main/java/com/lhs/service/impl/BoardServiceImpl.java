@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.lhs.dao.AttFileDao;
 import com.lhs.dao.BoardDao;
+import com.lhs.dao.ReplyDao;
 import com.lhs.dto.BoardDto;
 import com.lhs.dto.SearchCondition;
 import com.lhs.service.BoardService;
@@ -27,6 +28,7 @@ public class BoardServiceImpl implements BoardService{
 	@Autowired BoardDao bDao;
 	@Autowired AttFileDao attFileDao;
 	@Autowired FileUtil fileUtil;
+	@Autowired ReplyDao replyDao;
 	
 	@Value("#{config['project.file.upload.location']}") // 환경 변수에 있는 값을 저장해주는것
 	private String saveLocation;
@@ -152,6 +154,11 @@ public class BoardServiceImpl implements BoardService{
 	@Transactional // 트랜잭션 사용
 	public int delete(BoardDto boardDto) {
 	    try {
+	    	// 5. 게시글에 있는 댓글 모두 삭제
+	    	int delete = replyDao.AlldeleteReply(boardDto);
+	    	System.out.println("삭제된 댓글 수: " + delete);
+	    	// 삭제된 댓글 수
+	    	
 	        // 게시글 삭제시 가지고 있는 값 출력
 	        System.out.println("게시글 삭제시 가지고 있는 값: " + boardDto); // boardSeq, typeSeq
 	        

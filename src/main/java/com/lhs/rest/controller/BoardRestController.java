@@ -120,6 +120,8 @@ public class BoardRestController {
 	 	typeSeq            type_seq
 	 	option
 	 	keyword
+	 	
+	 	게시글 삭제시에 게시물에 포함되어 있는 댓글도 전부 삭제가 되어야 한다
 	*/
 	@PostMapping("/board/delete.do")
 	@ResponseBody

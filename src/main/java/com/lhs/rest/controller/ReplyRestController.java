@@ -127,6 +127,45 @@ public class ReplyRestController {
 			
 			return map;
 	}
+	
+	
+	
+	/*
+	 	3. 댓글 수정하기 
+	 	
+	 	replySeq: 22
+		boardSeq: 10784
+		replyContent=댓글 작성 수정!!!
+	 */
+	@PostMapping("/reply/update.do")
+	public HashMap<String, Object> updateReply(ReplyDto replyDto, BoardDto boardDto){
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			
+			System.out.println("댓글 수정하기 위해서 필요한 정보들 : " + replyDto);
+			// ReplyDto [replySeq=10, typeSeq=null, boardSeq=null, memberIdx=null, memberType=null, 
+			//           replyContent=댓글 작성 수정!!!, pcno=null, createDtm=null, upDate=null]
+			System.out.println("댓글 수정하기 위해서 필요한 정보들2 : " + boardDto);
+			
+			// 4. 해당 게시물의 특정 댓글 수정하기
+			int result = replyService.updateReply(replyDto);
+//			System.out.println("1이면 댓글 수정, 0이면 수정 실패 : " + result);
+			
+			if(result == 1) {
+				map.put("msg", "댓글이 수정 되었습니다");
+			}else {
+				map.put("msg", "댓글 수정이 실패 되었습니다");
+			}
+			
+			return map;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }
 
 

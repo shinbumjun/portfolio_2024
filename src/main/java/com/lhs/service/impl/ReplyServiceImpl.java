@@ -63,6 +63,13 @@ public class ReplyServiceImpl implements ReplyService {
 		
 		return replyDao.deleteReply(replyDto);
 	}
+
+	// 4. 해당 게시물의 특정 댓글 수정하기
+	@Override
+	public int updateReply(ReplyDto replyDto) {
+
+		return replyDao.updateReply(replyDto);
+	}
 	
 }
 
