@@ -21,11 +21,16 @@
 							<div class="box-icon box-icon-center box-icon-round box-icon-transparent box-icon-large box-icon-content" style="width:100%;
 	height:350px;">
 								<div class="box-icon-title">
-									<i class="b-0 fa fa-tablet"></i>
-									<h2>Fully Reposnive</h2>
+								    <i class="b-0 fa fa-tablet"></i>
+								    <h2><a href="https://github.com/shinbumjun/portfolio_2024">github 주소</a></h2>
+								    <p></p>
 								</div>
-								<p>Nullam id dolor id nibh ultricies vehicula ut id elit. Integer posuere erat a ante venenatis dapibus posuere</p>
 							
+							<!-- 
+								이 버튼은 모달 창을 열도록 설정 -> myModal
+								data-toggle="modal" 속성과 data-target="#myModal" 속성이 추가되어 있습니다. 
+								이는 해당 버튼을 클릭했을 때 myModal이라는 ID를 가진 모달 창이 열리도록 하는 역할
+							-->
 								<button type="button" class="btn btn-default btn-lg lightbox" data-toggle="modal" data-target="#myModal">
 								DB &nbsp; Modeling &nbsp; &nbsp;(IMG)
 								</button> <br><br/>
@@ -82,7 +87,7 @@
 				</div>
 				
 				
-									<!-- img modal content -->
+					<!-- ************************img modal content -->
 					<div id="myModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 						<div class="modal-dialog modal-lg">
 							<div class="modal-content">
@@ -95,8 +100,9 @@
 
 								<!-- Modal Body -->
 								<div class="modal-body">
-
-									<img id="erdImg" width="100%" src="<c:url value='/resources/portfolio_ERD.png'/>"/>
+									
+									<!-- /resources/portfolio_ERD.png(수정 전) S_shinbumjun.png(수정 후) -->
+									<img id="erdImg" width="100%" src="<c:url value='/resources/S_shinbumjun.png'/>"/>
 
 								<!-- Modal Footer -->
 								<div class="modal-footer">

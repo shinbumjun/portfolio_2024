@@ -83,8 +83,8 @@
 	                    	</c:when>
 	                    	<c:otherwise>
 	                    	<!-- 페이지를 추가하고 싶으면 여기에 링크를 작성해야함 javascript:movePage... 이런식으로 -->
-								<li><a tabindex="-1" href="javascript:movePage('/member/goPassword.do')">password?</a></li>
-								<li><a tabindex="-1" href="javascript:movePage('/member/goLoginPage.do')">LOGIN</a></li>
+								<li><a tabindex="-1" href="javascript:movePage('/member/goPassword.do')">비밀번호?</a></li>
+								<li><a tabindex="-1" href="javascript:movePage('/member/goLoginPage.do')">로그인</a></li>
 	                    	</c:otherwise>
 	                    </c:choose>
 					</ul>
@@ -111,21 +111,21 @@
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="dropdown active"><!-- HOME -->
 										<a class="dropdown-toggle noicon" href="<c:url value='/index.do'/>">
-											HOME
+											메인
 										</a>
 									</li>
 									
 									<li class="dropdown"><!-- PROFILE -->
 										<a class="dropdown-toggle noicon" href="javascript:movePage('/profile.do')">
-											PROFILE
+											프로필
 										</a>
 									</li>
 									<li class="dropdown"><!-- SPRING BOARD -->
 										<a class="dropdown-toggle">
-											SPRING BOARD
+											게시판
 										</a>
 										<ul class="dropdown-menu">
-											<li><a href="javascript:movePage('/notice/list.do')">공지사항</a></li>
+											<li><a href="javascript:movePage('/notice/list.do')">공지사항(구현중)</a></li>
 											<!-- li><a href="javascript:movePage('/board/list.do')">자유게시판</a></li -->
 											
 												<c:choose>
@@ -148,7 +148,7 @@
 									</li>
 									<li class="dropdown"><!-- NOTES -->
 										<a class="dropdown-toggle noicon" href="javascript:movePage('/devNotes.do')">
-											DEV-NOTES
+											개발 노트
 										</a>
 									</li>
 									
@@ -184,7 +184,7 @@
 							<!-- SLIDE --> 
 							<li data-transition="random" data-slotamount="1" data-masterspeed="1000" data-saveperformance="off" data-title="Slide 1">
 	
-								<img data-lazyload="resources/demo_files/images/index/index-min.jpg" alt="" data-bgfit="cover" data-bgposition="center bottom" data-bgrepeat="no-repeat" />
+								<img data-lazyload="resources/demo_files/images/index/index1.jpg" alt="" data-bgfit="cover" data-bgposition="center bottom" data-bgrepeat="no-repeat" />
 	
 								<div class="tp-caption customin ltl tp-resizeme text_white"
 									data-x="center"
@@ -200,7 +200,7 @@
 									data-endspeed="1000"
 									data-endeasing="Power4.easeIn" style="z-index: 10; font-size:20px;">
 									<span class="fw-300"> 잘 오셨습니다.
-									<b style="font-size:20px">신범준</b>의 포트폴리오 사이트 입니다. :) </span>
+									<b style="font-size:20px">신범준</b>의 포트폴리오 사이트 입니다.</span>
 								</div>
 	
 								<div class="tp-caption customin ltl tp-resizeme large_bold_white"
@@ -236,13 +236,13 @@
 									<br/>
 									<span style="font-size:20px;font-weight:400;line-height: 30px">
 									<ul>
-										<li>Spring Framework 5.3.32 / myBatis 3.4.1 / jUnit 4.12</li>
-										<li>jQuery 3.2.1/ jQuery UI 1.12.1/ jqGrid 4.4.3 / Maven / log 4.12 </li>
-										<br/>
-										<li>Languages : JAVA, JSP, JavaScript</li>
-										<li>Server : AWS t2.micro free tier</li>
-										<li>DBMS : MySql 5.7</li>
-										<li>WAS : Tomcat 8.5</li>
+									    <li>Spring Framework <b>5.3.32</b> / myBatis <b>3.5.15</b> / jUnit <b>5.10.2</b></li>
+									    <li>jQuery <b>3.2.1</b> / jQuery UI <b>1.12.1</b> / jqGrid <b>4.4.3</b> / Maven / log <b>1.2.17</b></li>
+									    <br/>
+									    <li>Languages : JAVA, JSP, JavaScript</li>
+									    <li>Server : AWS t2.micro free tier</li>
+									    <li>DBMS : MySql <b>8.3.0</b></li>
+									    <li>WAS : Tomcat <b>9</b></li>
 									</ul>
 									</span>								
 								</div>
@@ -251,7 +251,7 @@
 							<!-- SLIDE 2--> 
 							<li data-transition="random" data-slotamount="1" data-masterspeed="1000" data-saveperformance="off" data-title="Slide 2">
 	
-								<img src="" data-lazyload="resources/demo_files/images/index/24-min.jpg" alt="" data-bgposition="center center" data-kenburns="on" data-duration="10000" data-ease="Linear.easeNone" data-bgfit="100" data-bgfitend="110" />
+								<img src="" data-lazyload="resources/demo_files/images/index/index2.jpg" alt="" data-bgposition="center center" data-kenburns="on" data-duration="10000" data-ease="Linear.easeNone" data-bgfit="100" data-bgfitend="110" />
 	
 								<div class="tp-caption very_large_text lfb ltt tp-resizeme"
 									data-x="right" data-hoffset="-100"
@@ -265,7 +265,8 @@
 									data-endelementdelay="0.1"
 									data-endspeed="500"
 									data-endeasing="Power4.easeIn">
-									BEING AWAKE.
+									프로젝트 강의<br/>
+									마포 청년 나루<br/>
 								</div>
 	
 								<div class="tp-caption medium_light_white lfb ltt tp-resizeme"
@@ -280,9 +281,9 @@
 									data-endelementdelay="0.1"
 									data-endspeed="500"
 									data-endeasing="Power4.easeIn">
-									Happiness is an accident of nature,<br/>
-									a beautiful and flawless aberration.<br/>
-									<span style="font-size:24px;font-weight:400;">&ndash; Hyesue Lee</span>
+									2024-02-20 ~ 2024-03-14 ~<br/>
+									개인 프로젝트<br/>
+									<span style="font-size:24px;font-weight:400;">&ndash; sinbumjun</span>
 								</div>
 							</li>
 						</ul>
@@ -302,13 +303,13 @@
 							<ul class="list-unstyled">
 								<li class="footer-sprite address">
 									주소<br>
-									zip code ~~~<br>
+									서울특별시 동작구 사당1동<br>
 								</li>
 								<li class="footer-sprite phone">
-									010-cccc-3333
+									010-3873-6180
 								</li>
 								<li class="footer-sprite email">
-									<a href="mailto:#">your_email</a>
+									<a href="mailto:#">sinbumjun123@naver.com</a>
 								</li>
 							</ul>
 						</address>
@@ -317,21 +318,20 @@
 
 					<div class="col-md-2">
 						<!-- Links -->
-						<h4 class="letter-spacing-1">MENU</h4>
+						<h4 class="letter-spacing-1">메뉴</h4>
 						<ul class="footer-links list-unstyled">
 							<li><a href="<c:url value='/index.do'/>">홈으로</a></li>
 							<li><a href="javascript:movePage('/profile.do')">프로필</a></li>
-							<li><a href="javascript:movePage('/board/list.do')">게시판(spring)</a></li>
+							<li><a href="javascript:movePage('/board/list.do')">게시판</a></li>
 						</ul>
 						<!-- /Links -->
 					</div>
 
 					<div class="col-md-7">
 					
-					<h4 class="letter-spacing-1">THANKS FOR VISITING</h4>
-					<p>제가 구현한 스프링 게시판의 주요기능 확인을 위해 회원가입을 해주세요. :) <br/>
-					이 게시판은 관리자 / 일반 모드를 구분하여 구현하였으며 회원가입시 일반회원 모드로 가입됩니다.<br/>
-					* 임의의 관리자 계정으로 로그인:  <h3> ID: admin123 / PW: admin12# </h3>
+					<h4 class="letter-spacing-1">방문해 주셔서 감사합니다</h4>
+					<p>제가 구현한 스프링 게시판의 주요기능 확인을 위해 회원가입을 해주세요.<br/>
+					주요 기능 : 회원가입  / 비밀번호 번경 / 검색 및 페이징 / 파일 업로드 / 댓글 작성<br/>
 					</div>
 						
 					<div id="sidepanel" class="sidepanel-light">
@@ -340,7 +340,7 @@
 						</a>
 			
 						<div class="sidepanel-content">
-							<h2 class="sidepanel-title">HYESUE's Portfolio</h2>
+							<h2 class="sidepanel-title">범준이의 포트폴리오</h2>
 			
 							<!-- SIDE NAV -->
 							<ul class="list-group">
@@ -348,38 +348,38 @@
 								<li class="list-group-item">
 									<a href="<c:url value='/index.do'/>">
 										<i class="ico-category et-heart"></i>  
-										HOME
+										메인
 									</a>
 								</li>
 								<li class="list-group-item">
 									<a href="javascript:movePage('/profile.do')">
 										<i class="ico-category et-happy"></i>  
-										PROFILE
+										프로필
 									</a>
 								</li>
 								<li class="list-group-item">
 									<a href="javascript:movePage('/notice/list.do')">
 										<i class="ico-category et-happy"></i>  
-										NOTICE
+										공지사항(구현중)
 									</a>
 								</li>
 								<li class="list-group-item">
 									<a href="javascript:movePage('/board/list.do')">
 										<i class="ico-category et-happy"></i>  
-										FREE-BOARD
+										자유게시판
 									</a>
 								</li>
 							
 								<li class="list-group-item">
 									<a href="javascript:movePage('/tables.do')">
 										<i class="ico-category et-happy"></i>  
-										DEV-NOTES
+										개발 노트
 									</a>
 								</li>
 								<li class="list-group-item">
 									<a href="#">
 										<i class="ico-category et-beaker"></i> 
-										LEARNING
+										학습 혹은 학습자료
 									</a>
 								</li>
 			
@@ -389,21 +389,17 @@
 			
 							<!-- Social Icons -->
 							<div class="mt-20">							
-								<a href="#" target='_blank' class="social-icon social-icon-border social-gplus float-left" data-toggle="tooltip" data-placement="top" title="Google plus">
+								<a href="https://github.com/shinbumjun/portfolio_2024" target='_blank' class="social-icon social-icon-border social-gplus float-left" data-toggle="tooltip" data-placement="top" title="Google plus">
 									<i class="icon-github-circled"></i>
 									<i class="icon-github-circled"></i>
 								</a>
-								<a href="#" target='_blank' class="social-icon social-icon-border social-facebook float-left" data-toggle="tooltip" data-placement="top" title="Facebook">
-									<i class="icon-facebook"></i>
-									<i class="icon-facebook"></i>
-								</a>
-								<a href="#" class="social-icon social-icon-border social-twitter float-left" data-toggle="tooltip" data-placement="top" title="Twitter">
-									<i class="icon-instagram"></i>
-									<i class="icon-instagram"></i>
-								</a>
-								<a href="#" class="social-icon social-icon-border social-linkedin float-left" data-toggle="tooltip" data-placement="top" title="Linkedin">
+								<a href="https://www.instagram.com/bum.1005/p/CyYNIokv2ts/?img_index=1" class="social-icon social-icon-border social-twitter float-left" data-toggle="tooltip" data-placement="top" title="Twitter">
 									<i class="icon-linkedin"></i>
 									<i class="icon-linkedin"></i>
+								</a>
+								<a href="https://www.notion.so/portfolio_2024-accdde7bd46a43f6b405d7453738f13b" class="social-icon social-icon-border social-linkedin float-left" data-toggle="tooltip" data-placement="top" title="Linkedin">
+									<i class="icon-instagram"></i>
+									<i class="icon-instagram"></i>
 								</a>
 							</div>
 							<!-- /Social Icons -->
