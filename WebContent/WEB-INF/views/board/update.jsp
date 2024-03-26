@@ -10,7 +10,8 @@
 	//jQuery event(click) 처리 
 	$(document).ready(function(){
 		
-		$('#btnUpdate2').on('click', function(){ 
+		// $('#btnUpdate').on('click', function(){ 
+		$(document).on('click', '#btnUpdate', function() {
 			// 온클릭시 굳이 function doWrite() 펑션 선언,호출하지 말고 바로 종속시켜 기능 먹인다. 
 			// 여기서 바로 기능 구현. --> function의 선언을 줄인다.  
 			//따로 function 만들게 되면 해당 기능 수행하는 연결점 찾기 어렵다.. (펑션이름 일일이 검색해야함) 
@@ -39,6 +40,11 @@
 			customAjax("<c:url value='/board/update.do' />", "/board/list.do?page=${ph.page}&pageSize=${ph.pageSize}");
 		
 		}); //#btnUpdate end 	
+		
+		
+		
+		
+		
 		
 		/** Summernote HTML Editor
 		<textarea class="summernote form-control" data-height="200"></textarea>
@@ -115,19 +121,20 @@ function customAjax(url, responseUrl) {
 	});
 } // func customAjax End 
 
-<!--
-	mv.addObject("attFiles", attFiles); // 첨부파일 정보
-	mv.addObject("update", update); // BoaedDto
-	mv.addObject("ph", pageHandlerDto); // PageHandlerDto 
-	mv.setViewName("/board/update"); // 페이지
-	mv.addObject("msg", "수정 페이지");
 
-	-> 클릭 : deleteFile(${file.fileIdx} , ${file.boardSeq})
-	-> 이동 : /board/deleteAttFile.do
-	-> 성공 : javascript:movePage('/board/goToUpdate.do?boardSeq=${read.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}')
--->
 	
 function deleteFile(fileIdx, boardSeq){
+	
+	// mv.addObject("attFiles", attFiles); // 첨부파일 정보
+	// mv.addObject("update", update); // BoaedDto
+	// mv.addObject("ph", pageHandlerDto); // PageHandlerDto 
+	// mv.setViewName("/board/update"); // 페이지
+	// mv.addObject("msg", "수정 페이지");
+
+	// - 클릭 : deleteFile(${file.fileIdx} , ${file.boardSeq})
+	// - 이동 : /board/deleteAttFile.do
+	// - 성공 : javascript:movePage('/board/goToUpdate.do?boardSeq=${read.boardSeq}&page=${ph.page}&pageSize=${ph.pageSize}')
+
 	console.log("값 확인 ");
 	// 세션의 memberId가 null이 아닌 경우에만 실행  
 	if("${sessionScope.memberId}" != null) {
@@ -148,7 +155,6 @@ function deleteFile(fileIdx, boardSeq){
 
 </head>
 <body>
-	<!-- -->
 	<section>
 		<div class="container">
 			<h3></h3>
@@ -256,7 +262,7 @@ function deleteFile(fileIdx, boardSeq){
 												목록 
 											</button>
 										</a>
-										<button type="button" class="btn btn-primary" id="btnUpdate2">
+										<button type="button" class="btn btn-primary" id="btnUpdate">
 											수정
 										</button>
 									</div>

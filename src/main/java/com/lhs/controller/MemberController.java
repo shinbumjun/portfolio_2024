@@ -77,6 +77,8 @@ public class MemberController {
 	public ModelAndView logout(HttpSession session){
 		session.invalidate();
 		ModelAndView mv = new ModelAndView();
+		// RedirectView를 생성하여 로그아웃 후에 이동할 URL을 설정
+		String ctx = "http://ec2-43-201-36-144.ap-northeast-2.compute.amazonaws.com:8080/lhs";
 		RedirectView rv = new RedirectView(ctx+"/index.do");
 		mv.setView(rv);		
 		return mv;

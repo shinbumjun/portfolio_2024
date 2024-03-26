@@ -35,6 +35,14 @@ public class IndexController {
 		return mv;
 	}
 
+	@RequestMapping("/Story.do")
+	public ModelAndView Story(@RequestParam HashMap<String, String> params) {
+		ModelAndView mv = new ModelAndView();
+
+		mv.setViewName("Story");
+		return mv;
+	}
+	
 	@RequestMapping("/home.do")
 	public ModelAndView home(@RequestParam HashMap<String, String> params) {
 		ModelAndView mv = new ModelAndView();

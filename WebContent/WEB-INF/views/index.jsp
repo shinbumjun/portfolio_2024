@@ -79,7 +79,7 @@
 	                    	<%-- 로그인 사용자 정보 --%>
 	                    	
 								<li class="text-welcome hidden-xs-down">Welcome!! <strong>${sessionScope.memberNick}</strong></li>
-								<li><a tabindex="-1" href="<c:url value='/member/logout.do'/>"><i class="glyphicon glyphicon-off"></i> LOGOUT</a></li>
+								<li><a tabindex="-1" href="<c:url value='/member/logout.do'/>"><i class="glyphicon glyphicon-off"></i>로그아웃</a></li>
 	                    	</c:when>
 	                    	<c:otherwise>
 	                    	<!-- 페이지를 추가하고 싶으면 여기에 링크를 작성해야함 javascript:movePage... 이런식으로 -->
@@ -120,6 +120,13 @@
 											프로필
 										</a>
 									</li>
+									
+									<li class="dropdown"><!-- PROFILE -->
+										<a class="dropdown-toggle noicon" href="javascript:movePage('/Story.do')">
+											스토리
+										</a>
+									</li>
+									
 									<li class="dropdown"><!-- SPRING BOARD -->
 										<a class="dropdown-toggle">
 											게시판
@@ -331,7 +338,7 @@
 					
 					<h4 class="letter-spacing-1">방문해 주셔서 감사합니다</h4>
 					<p>제가 구현한 스프링 게시판의 주요기능 확인을 위해 회원가입을 해주세요.<br/>
-					주요 기능 : 회원가입  / 비밀번호 번경 / 검색 및 페이징 / 파일 업로드 / 댓글 작성<br/>
+					주요 기능 : 회원가입  / 메일 발송 / 비밀번호 번경 / 검색 및 페이징 / 파일 업로드 / 댓글 작성<br/>
 					</div>
 						
 					<div id="sidepanel" class="sidepanel-light">
@@ -358,6 +365,12 @@
 									</a>
 								</li>
 								<li class="list-group-item">
+									<a href="javascript:movePage('/Story.do')">
+										<i class="ico-category et-happy"></i>  
+										스토리
+									</a>
+								</li>
+								<li class="list-group-item">
 									<a href="javascript:movePage('/notice/list.do')">
 										<i class="ico-category et-happy"></i>  
 										공지사항(구현중)
@@ -371,15 +384,9 @@
 								</li>
 							
 								<li class="list-group-item">
-									<a href="javascript:movePage('/tables.do')">
+									<a href="javascript:movePage('/devNotes.do')">
 										<i class="ico-category et-happy"></i>  
 										개발 노트
-									</a>
-								</li>
-								<li class="list-group-item">
-									<a href="#">
-										<i class="ico-category et-beaker"></i> 
-										학습 혹은 학습자료
 									</a>
 								</li>
 			
