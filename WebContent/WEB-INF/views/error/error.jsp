@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">	
-<title>에러!!</title>
+<title>범준이의 포트폴리오</title>
 <script type="text/javascript">
 	$(document).ready(function(){
 		init();

@@ -23,7 +23,8 @@ public class FileController {
 
 		File file;
 		try {
-			file = context.getResource("classpath:files/portfolio_ERD.mwb").getFile();
+			// S_shinbumjun_ERD.mwb
+			file = context.getResource("classpath:files/S_shinbumjun_ERD.mwb").getFile();
 
 			rep.setHeader("Content-Disposition", "attachment; filename=\""+file.getName()+"\"");
 			rep.setHeader("Prama", "no-cache");
