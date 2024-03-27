@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.lhs.dao.EmailAuthDao">
+	
+	<!-- 
+		1. 이메일 인증 정보 insert
+		public emailAuthDto recordEmailAuth(MemberDto memberDto); 
+		
+		EmailAuthDto [authIdx=null, memberIdx=40, memberTypeSeq=1, memberId=bum.1005, email=sinbumjun123@naver.com, 
+	                  link=Y, expireDtm=2024-03-27T19:30:26.804504900, sendDtm=2024-03-27T19:29:26.804504900]
+	-->
+	<insert id="recordEmailAuth" parameterType="emailAuthDto">
+		INSERT INTO S_shinbumjun.email_auth
+		(member_idx, member_type_seq, member_id, email, link, expire_dtm, send_dtm)
+		VALUES(#{memberIdx}, #{memberTypeSeq}, #{memberId}, #{email}, #{link}, #{expireDtm}, DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'));
+		
+	</insert>
+
+</mapper>
+
+
+
+
+
+
+

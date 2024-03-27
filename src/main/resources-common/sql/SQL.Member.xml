@@ -19,7 +19,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="makeCipherText" parameterType="map" resultType="String">
-	SELECT SHA2(MD5(#{memberPw}), 256) AS pw
+		SELECT SHA2(MD5(#{memberPw}), 256) AS pw
 	</select>
 	
 	<!-- 
@@ -126,6 +126,17 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		FROM S_shinbumjun.`member`
 		where member_idx  = #{memberIdx};
 	</select>
+	
+	<!-- 
+		2. 인증이 완료되면 membercol 칼럼을 Y로 바꿈
+		public int getAuthenticationStatus(String memberId);
+	-->
+	<update id="getAuthenticationStatus" parameterType="String">
+		UPDATE S_shinbumjun.`member`
+		SET membercol='Y'
+		WHERE member_id = #{memberId};
+	</update>
+	
 	
 	<delete id = "delMember" parameterType="HashMap">
 		

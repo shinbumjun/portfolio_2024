@@ -12,12 +12,18 @@
 		<link href="<c:url value='/resources/plugins/jqgrid/css/ui.jqgrid.css'/>" rel="stylesheet" type="text/css" />
 		<link href="<c:url value='/resources/css/layout-jqgrid.css'/>" rel="stylesheet" type="text/css" />
 	</head>
+	
+	
+	
+	
+	
+	
 <body>
 
 
 	<section class="page-header page-header-xs">
 				<div class="container">
-					<h1>회원 관리 - 조회 및 삭제 </h1>
+					<h1>회원 관리 - 비밀번호 찾기에서 인증을 안한 고객은 삭제 대상입니다</h1>
 				</div>
 			</section>
 			<!-- /PAGE HEADER -->
@@ -232,4 +238,7 @@ $(document).ready(function(){
 });
 		</script>
 </body>
+
+
+
 </html>

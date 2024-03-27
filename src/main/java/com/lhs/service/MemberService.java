@@ -47,6 +47,9 @@ public interface MemberService {
 
 	// 3. 각 댓글의 작성자 이름 가져오기
 	public String getReplyName(int memberIdx);
+
+	// 1. 이메일 인증 정보를 삽입
+	public int insertEmailAuth(MemberDto memberDto);
 }
 
 

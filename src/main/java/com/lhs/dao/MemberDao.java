@@ -40,6 +40,9 @@ public interface MemberDao {
 
 	// 3. 각 댓글의 작성자 이름 가져오기
 	public String getReplyName(int memberIdx);
+
+	// 2. 인증이 완료되면 membercol 칼럼을 Y로 바꿈
+	public int getAuthenticationStatus(String memberId);
 }
 
 

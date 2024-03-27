@@ -1,5 +1,6 @@
 package com.lhs.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -13,6 +14,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.lhs.dao.MemberDao;
+import com.lhs.dao.EmailAuthDao;
+import com.lhs.dto.EmailAuthDto;
 import com.lhs.dto.EmailDto;
 import com.lhs.dto.MemberDto;
 import com.lhs.exception.PasswordMissMatchException;
@@ -28,7 +31,8 @@ import com.lhs.util.Sha512Encoder;
 public class MemberServiceImpl implements MemberService {
 	
 	@Autowired MemberDao mDao; 
-
+	@Autowired EmailAuthDao emailauthDao;
+	
 	// 이메일을 발송하기 위해서 주입
 	@Autowired
 	private EmailUtil emailUtil;
@@ -242,8 +246,51 @@ public class MemberServiceImpl implements MemberService {
 	// 3. 각 댓글의 작성자 이름 가져오기
 	@Override
 	public String getReplyName(int memberIdx) {
-		// TODO Auto-generated method stub
+		
 		return mDao.getReplyName(memberIdx);
+	}
+
+	// 1. 이메일 인증 정보를 삽입
+	@Override
+	public int insertEmailAuth(MemberDto memberDto) {
+		String memberId = memberDto.getMemberId(); // 기존에 만들어져 있는 select문 사용하기 위해서
+		MemberDto member = mDao.Loginchick(memberId);
+		
+		System.out.println("인증을 한 회원 정보 확인 : " + member);
+		// MemberDto [memberIdx=40, typeSeq=1, memberId=bum.1005, memberPw=4242cd3..., memberName=신범준, memberNick=신범준, 
+		// email=sinbumjun123@naver.com, createDtm=20240319164727, updateDtm=20240319164727, membercol=null]
+		
+		// 1. 이메일 인증 정보 insert
+		EmailAuthDto emailAuthDto = new EmailAuthDto();
+	    emailAuthDto.setMemberIdx(member.getMemberIdx());
+	    emailAuthDto.setMemberTypeSeq(member.getTypeSeq());
+	    emailAuthDto.setMemberId(member.getMemberId());
+	    emailAuthDto.setEmail(member.getEmail());
+	    emailAuthDto.setLink("Y");
+	    
+		// 현재 시간
+	    LocalDateTime now = LocalDateTime.now();
+
+	    // 1분을 더한 후 expireDtm으로 설정
+	    LocalDateTime expireDateTime = now.plusMinutes(1);
+
+	    // emailAuthDto 객체 생성
+	    emailAuthDto.setEmail(memberDto.getEmail());
+	    emailAuthDto.setExpireDtm(expireDateTime.toString()); // expireDtm 설정
+	    emailAuthDto.setSendDtm(now.toString()); // sendDtm 설정
+	    System.out.println("emailAuthDao 담은 값들 확인 : " + emailAuthDto);
+	    // EmailAuthDto [authIdx=null, memberIdx=40, memberTypeSeq=1, memberId=bum.1005, email=sinbumjun123@naver.com, 
+	    //               link=Y, expireDtm=2024-03-27T19:30:26.804504900, sendDtm=2024-03-27T19:29:26.804504900]
+	    
+		int result = emailauthDao.recordEmailAuth(emailAuthDto);
+		if(result == 1) { 
+			// 2. 인증이 완료되면 membercol 칼럼을 Y로 바꿈
+			int ok = mDao.getAuthenticationStatus(memberId);
+			System.out.println("membercol 인증 완료면 1 아니면 0 : " + ok);
+		}
+		System.out.println("성공적으로 ,insert되었는지 확인 : " + result);
+		
+		return 0;
 	}
 }
 

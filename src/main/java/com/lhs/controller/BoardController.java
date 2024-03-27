@@ -41,11 +41,9 @@ public class BoardController {
 	@Autowired AttFileService attFileService;
 	@Autowired FileUtil fileUtil;
 	
-	@Autowired
-	MemberService mService;
+	@Autowired MemberService mService;
 	
-	@Autowired
-    private ReplyService replyService;
+	@Autowired private ReplyService replyService;
 
 	private String typeSeq = "2";
 

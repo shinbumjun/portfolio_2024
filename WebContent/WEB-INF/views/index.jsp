@@ -160,13 +160,14 @@
 									</li>
 									
 							
-							<c:if test='${sessionScope.memberId != null && sessionScope.memberType ==9 }'>
-									<li class="dropdown mega-menu"><!-- SHORTCODES -->
-										<a class="dropdown-toggle noicon" href="javascript:movePage('/admin.do')">
-											ADMIN
-										</a>
-									</li>
-							</c:if>		
+							<!-- c:if test='${sessionScope.memberId != null && sessionScope.memberType ==9 }' -->
+							<c:if test="${sessionScope.memberId == 'admin'}">
+							    <li class="dropdown mega-menu"><!-- SHORTCODES -->
+							        <a class="dropdown-toggle noicon" href="javascript:movePage('/admin.do')">
+							            	회원관리
+							        </a>
+							    </li>
+							</c:if>	
 									<li>
 										<a id="sidepanel_btn" href="#" class="fa fa-bars"></a>
 									</li>
@@ -338,7 +339,7 @@
 					
 					<h4 class="letter-spacing-1">방문해 주셔서 감사합니다</h4>
 					<p>제가 구현한 스프링 게시판의 주요기능 확인을 위해 회원가입을 해주세요.<br/>
-					주요 기능 : 회원가입  / 메일 발송 / 비밀번호 번경 / 검색 및 페이징 / 파일 업로드 / 댓글 작성<br/>
+					주요 기능 : 회원가입  / 메일 발송 / 비밀번호 번경 / 이메일 인증 / amdin 회원관리 / 검색 및 페이징 / 파일 업로드 / 댓글 작성<br/>
 					</div>
 						
 					<div id="sidepanel" class="sidepanel-light">

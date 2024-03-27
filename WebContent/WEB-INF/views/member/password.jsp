@@ -45,6 +45,13 @@
 		    }
 		    
 		    // 세션에 저장된 인증번호 확인
+		    // ********************** 인증이 되면 email_auth 테이블 insert 하기 **********************
+		    // -> 먼저 서버에 요청하여 세션에서 인증번호를 받아옴 
+		    // -> 클라이언트에서 사용자가 입력한 인증번호와 세션에서 받아온 인증번호를 비교
+		    // -> 비교 결과에 따라 추가적인 동작을 수행
+		    
+		    // /member/getSessionNumbe : 세션에 저장된 임시 인증번호를 가져오는 컨트롤러 메서드
+		    // ********************** 서버로 요청 전에 입력한 인증번호를 확인하여 유효한 경우에만 서버로 전송
 		    $.ajax({
 		        url: '<%= request.getContextPath() %>/member/getSessionNumber.do',
 		        type: 'GET',
@@ -52,10 +59,14 @@
 		        data: {
 		            memberId: memberId,
 		            email: email,
+		            verificationCode: verificationCode // 유효한 경우에만 전송
 		        },
 		        success: function(sessionVerificationCode) {
 		            console.log("서버에서 받아온 세션 인증번호: " + sessionVerificationCode);
 		            if(sessionVerificationCode == verificationCode) { 
+		            	
+		            	// $.ajax
+		            	
 		            	
 		            	var memberId = $('#memberId').val(); // memberId 값 가져오기 찍힘
 		    		    console.log("memberId : " + memberId)
@@ -115,7 +126,7 @@
 					    $('#btnLogin').prop('disabled', true); // 인증번호 받기 버튼 비활성화
 					    interval = setInterval(function() { // interval 변수에 setInterval()을 할당하여 전역에서 clearInterval()을 사용할 수 있도록 합니다.
 					        updateCountdown();
-					    }, 300);
+					    }, 1000); // 1초 간격으로 업데이트하도록 수정
 					    
 					}
 					else {

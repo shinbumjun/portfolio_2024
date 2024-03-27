@@ -1,4 +1,4 @@
-package com.lhs.controller;
+package com.lhs.rest.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -309,10 +309,35 @@ public class MemberRestController {
 	
 	}
 	
-	// 세션에 저장된 임시 인증번호를 가져오는 컨트롤러 메서드
+	/*
+	 	세션에 저장된 임시 인증번호를 가져오는 컨트롤러 메서드
+	 	
+	 	브라우저에서 받은 memberDto 값 memberId, email
+	 	브라우저에 입력한 인증번호 : verificationCode
+	 	먼저 서버에 요청하여 세션에서 인증번호 : (String) session.getAttribute("number")
+	 	
+	 	비교 후에 일치 한다면 email_auth 테이블 insert 하기
+	 */
 	@RequestMapping("/member/getSessionNumber.do")
 	@ResponseBody
-	public String getSessionNumber(HttpSession session) {
+	public String getSessionNumber(MemberDto memberDto, HttpSession session, String verificationCode) {
+		HashMap<String, String> map = new HashMap<String, String>(); 
+		
+		System.out.println("memberDto 확인 : " + memberDto);
+		// memberId=bum.1005, email=sinbumjun123@naver.com
+		System.out.println("브라우저에 입력한 인증번호 확인 : " + verificationCode);
+		System.out.println("먼저 서버에 요청하여 세션에서 인증번호 확인 : " + session.getAttribute("number"));
+		
+		// 서버에 저장된 인증번호
+		String number = (String)session.getAttribute("number");
+		
+		// **********서버에 저장된 인증번호와 브라우저에 입력한 값이 같으면 email_auth 테이블 insert 하기
+		if(verificationCode.equals(number)) { // 문자열 비교
+			System.out.println("인증번호가 일치하기 때문에 email_auth insert");
+			// 1. 이메일 인증 정보를 삽입
+			mService.insertEmailAuth(memberDto);
+		}
+		
 	    return (String) session.getAttribute("number");
 	}
 	
